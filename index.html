@@ -82,50 +82,76 @@
 
   <!-- ========== JAVASCRIPT ========== -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const novaBtn = document.getElementById("novaButton");
-      const panel = document.getElementById("novaChatPanel");
-      const closeBtn = document.getElementById("closeNovaChat");
-      const form = document.getElementById("novaChatForm");
-      const input = document.getElementById("novaChatText");
-      const messages = document.getElementById("novaChatMessages");
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const novaBtn = document.getElementById("novaButton");
+    const panel = document.getElementById("novaChatPanel");
+    const closeBtn = document.getElementById("closeNovaChat");
+    const form = document.getElementById("novaChatForm");
+    const input = document.getElementById("novaChatText");
+    const messages = document.getElementById("novaChatMessages");
 
-      function openPanel() {
-        panel.classList.add("open");
-        input && input.focus();
-      }
+    function openPanel() {
+      panel.classList.add("open");
+      input && input.focus();
+    }
 
-      function closePanel() {
-        panel.classList.remove("open");
-      }
+    function closePanel() {
+      panel.classList.remove("open");
+    }
 
-      novaBtn.addEventListener("click", openPanel);
-      closeBtn.addEventListener("click", closePanel);
+    novaBtn.addEventListener("click", openPanel);
+    closeBtn.addEventListener("click", closePanel);
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        const text = input.value.trim();
-        if (!text) return;
+      const text = input.value.trim();
+      if (!text) return;
 
-        // user message
-        const userMsg = document.createElement("div");
-        userMsg.className = "nova-msg nova-msg-user";
-        userMsg.innerHTML = `<p>${text}</p>`;
-        messages.appendChild(userMsg);
+      // user message bubble
+      const userMsg = document.createElement("div");
+      userMsg.className = "nova-msg nova-msg-user";
+      userMsg.innerHTML = `<p>${text}</p>`;
+      messages.appendChild(userMsg);
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
 
-        input.value = "";
-        messages.scrollTop = messages.scrollHeight;
+      // loading bubble
+      const loadingMsg = document.createElement("div");
+      loadingMsg.className = "nova-msg nova-msg-nova";
+      loadingMsg.innerHTML = "<p>Connecting to SuperNova…</p>";
+      messages.appendChild(loadingMsg);
+      messages.scrollTop = messages.scrollHeight;
 
-        // placeholder Nova reply
+      try {
+        const res = await fetch("/api/nova", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
+
+        const data = await res.json();
+        loadingMsg.remove();
+
         const novaMsg = document.createElement("div");
         novaMsg.className = "nova-msg nova-msg-nova";
-        novaMsg.innerHTML = `<p>SAI placeholder response. (Live connection coming next.)</p>`;
+        novaMsg.innerHTML = `<p>${data.reply || "No reply received."}</p>`;
         messages.appendChild(novaMsg);
-
         messages.scrollTop = messages.scrollHeight;
-      });
+      } catch (err) {
+        console.error(err);
+        loadingMsg.remove();
+        const errorMsg = document.createElement("div");
+        errorMsg.className = "nova-msg nova-msg-nova";
+        errorMsg.innerHTML = "<p>Problem talking to SAI backend.</p>";
+        messages.appendChild(errorMsg);
+        messages.scrollTop = messages.scrollHeight;
+      }
     });
+  });
+</script>
+
   </script>
 
 </body>
