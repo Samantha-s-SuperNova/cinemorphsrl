@@ -1,160 +1,250 @@
-// Synthetic AI — Incremental Update Engine
-// Safe mode: Only small fixes. Only runs when you click a button.
-
+// Synthetic AI — Incremental Update Engine + Command Bridge
 (function () {
-  const config = window.SYNTHETIC_AI_CONFIG || {};
-  const fences = config.fences || {};
-  const uiCfg = config.ui || {};
+  const config = window.SYNTHETIC_AI_CONFIG;
+  if (!config) return;
 
-  const LOG_PREFIX = "[SyntheticAI] ";
+  const ui = config.ui || {};
 
   function log(msg) {
-    const full = LOG_PREFIX + msg;
-    console.log(full);
-
-    const el = document.getElementById(uiCfg.logElementId);
+    console.log(msg);
+    const el = document.getElementById(ui.logElementId);
     if (el) {
-      const line = document.createElement("div");
-      line.textContent = full;
-      el.appendChild(line);
+      const d = document.createElement("div");
+      d.textContent = msg;
+      el.appendChild(d);
       el.scrollTop = el.scrollHeight;
     }
   }
 
-  function isProtected(el) {
-    return fences.protectedAttribute &&
-           el.hasAttribute(fences.protectedAttribute);
-  }
-
-  function isAllowed(el, scope) {
-    if (!el.hasAttribute(fences.requireOptInAttribute)) return false;
-    const val = el.getAttribute(fences.requireOptInAttribute);
-    if (!fences.allowedScopes.includes(val)) return false;
-    if (scope && val !== scope) return false;
-    return true;
-  }
-
-  // ================= RULES (MICRO FIXES ONLY) =================
-
-  function normalizePortalCards() {
-    const items = [...document.querySelectorAll("[data-sai='portal']")]
-      .filter(el => !isProtected(el));
-
-    if (!items.length) return null;
-
+  // ========== LAYOUT MICRO-FIX RULES ==========
+  function normalizePortal() {
+    const cards = [...document.querySelectorAll("[data-sai='portal']")];
+    if (!cards.length) return null;
     return {
-      id: "normalize-portal-cards",
       label: "Normalize portal cards",
       apply() {
-        items.forEach(card => {
-          card.style.display = "flex";
-          card.style.alignItems = "center";
-          card.style.justifyContent = "space-between";
-          card.style.minWidth = "220px";
-          card.style.maxWidth = "220px";
-          card.style.minHeight = "80px";
-          card.style.padding = "0.75rem 1rem";
+        cards.forEach((c) => {
+          c.style.display = "flex";
+          c.style.alignItems = "center";
+          c.style.justifyContent = "space-between";
+          c.style.minWidth = "220px";
+          c.style.maxWidth = "220px";
         });
-      }
+      },
     };
   }
 
-  function normalizeWorkEnvCards() {
-    const items = [...document.querySelectorAll("[data-sai='work-env']")]
-      .filter(el => !isProtected(el));
-
-    if (!items.length) return null;
-
+  function normalizeWorkEnv() {
+    const cards = [...document.querySelectorAll("[data-sai='work-env']")];
+    if (!cards.length) return null;
     return {
-      id: "normalize-work-env",
-      label: "Normalize work environment tiles",
+      label: "Normalize work environment",
       apply() {
-        items.forEach(card => {
-          card.style.display = "flex";
-          card.style.alignItems = "center";
-          card.style.justifyContent = "space-between";
-          card.style.minHeight = "48px";
-          card.style.padding = "0.5rem 0.75rem";
-          card.style.fontSize = "0.95rem";
+        cards.forEach((c) => {
+          c.style.display = "flex";
+          c.style.alignItems = "center";
+          c.style.justifyContent = "space-between";
         });
-      }
+      },
     };
   }
 
-  function tightenLayoutGaps() {
-    const items = [...document.querySelectorAll("[data-sai='layout']")]
-      .filter(el => !isProtected(el));
-
-    if (!items.length) return null;
-
+  function tightenGaps() {
+    const areas = [...document.querySelectorAll("[data-sai='layout']")];
+    if (!areas.length) return null;
     return {
-      id: "tighten-layout-gaps",
       label: "Tighten layout gaps",
       apply() {
-        items.forEach(area => {
-          area.style.display = "flex";
-          area.style.flexDirection = "column";
-          area.style.rowGap = "0.35rem";
+        areas.forEach((a) => {
+          a.style.display = "flex";
+          a.style.flexDirection = "column";
+          a.style.rowGap = "0.35rem";
         });
-      }
+      },
     };
   }
 
   function collect() {
-    return [
-      normalizePortalCards(),
-      normalizeWorkEnvCards(),
-      tightenLayoutGaps()
-    ].filter(Boolean);
+    return [normalizePortal(), normalizeWorkEnv(), tightenGaps()].filter(
+      Boolean
+    );
   }
 
-  const SyntheticAI = {
+  const SAI = {
     scan() {
       log("Scan requested.");
       const fixes = collect();
       if (!fixes.length) {
-        log("No fixes found.");
-      } else {
-        fixes.forEach(f => log("Found: " + f.label));
+        log("No layout micro-fixes needed.");
+        return [];
       }
+      fixes.forEach((f) => log("Found: " + f.label));
       return fixes;
     },
-
     applyAll() {
       if (config.mode !== "incremental-only") {
         log("Blocked: not in incremental-only mode.");
         return;
       }
-
       const fixes = this.scan();
       if (!fixes.length) return;
-
-      log("Applying fixes...");
-      fixes.forEach(f => {
-        try { f.apply(); log("Applied: " + f.label); }
-        catch (e) { log("Error: " + e.message); }
-      });
-
+      log("Applying layout micro-fixes...");
+      fixes.forEach((f) => f.apply());
       log("Done.");
-    }
+    },
   };
 
-  window.SyntheticAI = SyntheticAI;
+  // Expose for debugging if needed
+  window.SyntheticAI = SAI;
 
-  // ================= UI =================
+  // ========== COMMAND BRIDGE (NOVA ↔ SAI CHAT) ==========
 
-  function bindUI() {
-    const scan = document.getElementById(uiCfg.scanButtonId);
-    const apply = document.getElementById(uiCfg.applyButtonId);
-    const quick = document.getElementById(uiCfg.quickFixButtonId);
+  const MIN_DELAY_MS = 3000; // 3 seconds minimum between responses
 
-    if (scan) scan.onclick = () => SyntheticAI.scan();
-    if (apply) apply.onclick = () => SyntheticAI.applyAll();
-    if (quick) quick.onclick = () => SyntheticAI.applyAll();
-
-    log("Synthetic AI ready. Idle until you click.");
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  document.addEventListener("DOMContentLoaded", bindUI);
-})();
+  function addMessageElement(sender, text, isTyping = false) {
+    const container = document.getElementById("cbMessages");
+    if (!container) return null;
 
+    const bubble = document.createElement("div");
+    bubble.classList.add("cb-msg");
+    if (sender === "nova") bubble.classList.add("cb-msg-nova");
+    if (sender === "sai") bubble.classList.add("cb-msg-sai");
+    if (isTyping) bubble.classList.add("cb-msg-typing");
+
+    bubble.textContent = text;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+    return bubble;
+  }
+
+  async function novaSpeaks(text) {
+    addMessageElement("nova", text, false);
+    await delay(MIN_DELAY_MS);
+  }
+
+  async function saiSpeaks(text) {
+    const typing = addMessageElement("sai", "SAI is processing…", true);
+    await delay(MIN_DELAY_MS);
+    if (typing) typing.remove();
+    addMessageElement("sai", text, false);
+  }
+
+  async function handleUserInputToBridge(userText) {
+    if (!userText || !userText.trim()) return;
+
+    // Treat as Nova message
+    addMessageElement("nova", userText.trim(), false);
+
+    // Basic intent detection (simple, safe)
+    const text = userText.toLowerCase();
+    let saiReply =
+      "Acknowledged. I am ready to support layout and micro-fix tasks when you approve.";
+
+    if (text.includes("scan")) {
+      saiReply =
+        "I can scan the dashboard for layout micro-fix opportunities. Use the SAI buttons or 'Apply SAI Fixes' to run them.";
+    } else if (text.includes("fix")) {
+      saiReply =
+        "I will prepare micro-fixes. Use 'Apply SAI Fixes' to approve and apply them.";
+    } else if (text.includes("hello") || text.includes("hi")) {
+      saiReply = "Hello Sam. Nova and I are ready on the Command Bridge.";
+    } else if (text.includes("nova")) {
+      saiReply =
+        "Nova is your strategic brain. I am your micro-fix engine. Together we keep the dashboard clean.";
+    }
+
+    await saiSpeaks(saiReply);
+  }
+
+  async function initialBridgeGreetingIfEmpty() {
+    const container = document.getElementById("cbMessages");
+    if (!container) return;
+    if (container.childElementCount > 0) return;
+
+    await novaSpeaks("Hi Sam, Command Bridge is online.");
+    await saiSpeaks("SAI here. I am standing by for layout micro-fix tasks.");
+  }
+
+  function openBridgePanel() {
+    const panel = document.getElementById("commandBridgePanel");
+    if (!panel) return;
+    panel.classList.remove("cb-panel-hidden");
+    panel.classList.add("cb-panel-visible");
+    initialBridgeGreetingIfEmpty();
+  }
+
+  function closeBridgePanel() {
+    const panel = document.getElementById("commandBridgePanel");
+    if (!panel) return;
+    panel.classList.remove("cb-panel-visible");
+    panel.classList.add("cb-panel-hidden");
+  }
+
+  // ========== DOM BINDINGS ==========
+  document.addEventListener("DOMContentLoaded", () => {
+    // SAI layout buttons
+    const scanBtn = document.getElementById(ui.scanButtonId);
+    const applyBtn = document.getElementById(ui.applyButtonId);
+    const quickBtn = document.getElementById(ui.quickFixButtonId);
+
+    if (scanBtn) scanBtn.onclick = () => SAI.scan();
+    if (applyBtn) applyBtn.onclick = () => SAI.applyAll();
+    if (quickBtn) quickBtn.onclick = () => SAI.applyAll();
+
+    log("Synthetic AI ready.");
+
+    // Command Bridge bindings
+    const toggle = document.getElementById("commandBridgeToggle");
+    const panel = document.getElementById("commandBridgePanel");
+    const closeBtn = document.getElementById("cbClose");
+    const sendBtn = document.getElementById("cbSend");
+    const input = document.getElementById("cbInput");
+    const applyFixesBtn = document.getElementById("cbApplyFixes");
+
+    if (toggle && panel) {
+      toggle.onclick = () => {
+        const isHidden = panel.classList.contains("cb-panel-hidden");
+        if (isHidden) {
+          openBridgePanel();
+        } else {
+          closeBridgePanel();
+        }
+      };
+    }
+
+    if (closeBtn) {
+      closeBtn.onclick = () => closeBridgePanel();
+    }
+
+    function handleSend() {
+      if (!input) return;
+      const value = input.value;
+      input.value = "";
+      handleUserInputToBridge(value);
+    }
+
+    if (sendBtn) sendBtn.onclick = handleSend;
+    if (input) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleSend();
+        }
+      });
+    }
+
+    if (applyFixesBtn) {
+      applyFixesBtn.onclick = async () => {
+        await novaSpeaks("Nova: Sending a request to SAI to apply layout micro-fixes.");
+        await saiSpeaks(
+          "SAI: Applying micro-fixes now within incremental-only safety mode."
+        );
+        SAI.applyAll();
+      };
+    }
+  });
+})();
