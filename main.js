@@ -59,43 +59,39 @@ function setSystemStatus(mode, text) {
 // ---------- Nova Button (AI only, no deploy) ----------
 function handleNovaPress() {
   const btn = document.getElementById("novaButton");
-  if (!btn) return;
+  if (btn) {
+    btn.classList.add("active");
+    setTimeout(() => btn.classList.remove("active"), 180);
+  }
 
-  btn.classList.add("active");
   setSystemStatus("listening", "System: Listening");
-
   appendLog(
-    `${getTimeStamp()} [NOVA] Activation glyph pressed. Listening for a command in the input bar…`
+    `${getTimeStamp()} [NOVA] Listening… type a command below when you're ready.`
   );
-
-  // small visual pulse
-  setTimeout(() => btn.classList.remove("active"), 220);
 }
 
 // ---------- Typed Command Handling ----------
 function generateNovaReply(commandText) {
-  // This simulates "me" inside the dashboard:
-  // warm, clear, Samantha-focused tone.
   const lower = commandText.toLowerCase();
 
   if (lower.includes("status")) {
-    return "Here’s your current status: Dashboard online, Nova engine listening, and portals ready inside Samantha’s Universe.";
+    return "Status: dashboard online, Nova engine listening, portals ready in Samantha’s Universe.";
   }
   if (lower.includes("voice")) {
-    return "The Voice Simulator portal will be your space for real-time voice control and interface testing once it’s wired to the backend.";
+    return "Voice Simulator will handle your real-time voice interface and testing once wired to the backend.";
   }
   if (lower.includes("game")) {
-    return "Game Portal is reserved for your interactive mission builder. We’ll treat it as a dedicated playground for your scenarios.";
+    return "Game Portal is reserved for your interactive mission builder and scenarios.";
   }
   if (lower.includes("movie") || lower.includes("cineverse")) {
-    return "Cineverse Creator is your cinematic builder. Think of it as the storyboard + scene engine for Samantha’s Universe.";
+    return "Cineverse Creator is your cinematic builder for scenes and storylines.";
   }
   if (lower.includes("deploy")) {
-    return "Remember: the Nova activation glyph never deploys anything. Use the Deployment Panel buttons for safe, log-only deployment actions.";
+    return "Reminder: the pink Nova orb never deploys anything. Use the Deployment Panel buttons only.";
   }
 
-  // Default friendly reply
-  return "Got it. I’m treating that as a Universe command and logging it here. When you’re ready, we can wire this console to the full Nova backend so it behaves exactly like this chat.";
+  // Short default, so it doesn't feel repetitive
+  return "Command noted in Samantha’s Universe console.";
 }
 
 function sendCommand() {
@@ -124,15 +120,15 @@ function handleDeploymentAction(actionKey) {
   switch (actionKey) {
     case "local-preview":
       message =
-        "Local preview requested. Open index.html in your browser to review the dashboard.";
+        "Local preview requested. Open this index.html in your browser to review the dashboard.";
       break;
     case "vercel-deploy":
       message =
-        "Vercel deploy requested (log-only). Use your Vercel interface or CI pipeline when you’re ready to deploy.";
+        "Vercel deploy requested (log-only). Use your Vercel dashboard when you’re ready.";
       break;
     case "refresh-env":
       message =
-        "Environment refresh requested. Treat this as a reminder to reload the page or redeploy when changes are made.";
+        "Environment refresh requested. Reload the page or redeploy after file changes.";
       break;
     default:
       message = `Unknown deployment action: ${actionKey}`;
@@ -148,14 +144,13 @@ function handlePortalClick(tile) {
   const label =
     tile.querySelector("h3")?.textContent?.trim() || "Unknown Portal";
 
-  // Highlight active tile
   document.querySelectorAll(".portal-tile").forEach((el) => {
     el.classList.remove("active");
   });
   tile.classList.add("active");
 
   appendLog(
-    `${getTimeStamp()} [DASH] Routing focus to ${portal} — ${label}. (Visual-only route in this prototype.)`
+    `${getTimeStamp()} [DASH] Focus routed to ${portal} — ${label}. (Visual route only in this prototype.)`
   );
 }
 
@@ -173,7 +168,7 @@ function initDashboard() {
     `${getTimeStamp()} [SYSTEM] Samantha's SuperNova Dashboard initialized.`
   );
   appendLog(
-    `${getTimeStamp()} [UNIVERSE] READY. Visual core online. Waiting for your next object in the Work Environment.`
+    `${getTimeStamp()} [UNIVERSE] Ready. Visual core online; Work Environment waiting for your next object.`
   );
 
   setSystemStatus("online", "System: Online");
