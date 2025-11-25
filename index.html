@@ -1,153 +1,143 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CinemorphSRL — Oasis Dashboard</title>
+  <title>CinemorphSRL — SuperNova Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body class="app oasis">
+<body class="app">
+  <!-- ========== TOP BAR ========== -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-mark"></div>
+      <div class="brand-mark" aria-hidden="true"></div>
       <div>
         <h1>CinemorphSRL</h1>
-        <p class="sub">Oasis Control Deck — Calm Build Mode</p>
+        <p class="sub">SuperNova Control Deck — Jet Black + Gold Edition</p>
       </div>
     </div>
 
-    <!-- 🜁 NOVA BUTTON (Deploy from dashboard only) -->
     <div class="top-actions">
-      <button id="novaGlobalBtn" class="nova-btn nova-cosmic" title="🜁 NOVA">
-        <span class="nova-glyph">🜁</span>
-        <span class="nova-text">NOVA</span>
+      <div class="status-pill" id="systemStatus">
+        <span class="dot"></span>
+        <span class="label">System: Online</span>
+      </div>
+
+      <button id="novaButton" class="nova-button" aria-label="Nova Button">
+        <span class="nova-glow"></span>
+        <span class="nova-inner">
+          <span class="nova-orb"></span>
+          <span class="nova-text">Call Nova</span>
+        </span>
       </button>
     </div>
   </header>
 
-  <main class="wrap">
-
-    <!-- Mission Status -->
-    <section class="hero card">
-      <div class="hero-left">
-        <h2 class="hero-title">Mission Status</h2>
-        <p class="hero-sub">Your portals are wired. You control the pace.</p>
-
-        <div id="missionBanner" class="blink-banner actionable">
-          <span class="blink-dot"></span>
-          <span id="missionText">System standing by for Nova deployment — click to review.</span>
+  <!-- ========== MAIN LAYOUT ========== -->
+  <main class="layout">
+    <!-- LEFT COLUMN: STATUS + DEPLOYMENT + LOG -->
+    <section class="column column-left">
+      <!-- System Status Card -->
+      <section class="card">
+        <header class="card-header">
+          <h2>Universe Status</h2>
+          <span class="chip chip-ok">READY</span>
+        </header>
+        <div class="card-body">
+          <ul class="status-list">
+            <li>
+              <span class="label">Visual Core</span>
+              <span class="value">Online</span>
+            </li>
+            <li>
+              <span class="label">Nova Engine</span>
+              <span class="value">Listening</span>
+            </li>
+            <li>
+              <span class="label">Portal Map</span>
+              <span class="value">Linked</span>
+            </li>
+          </ul>
         </div>
-      </div>
+      </section>
 
-      <div class="hero-right">
-        <div class="metrics">
-          <div class="metric">
-            <div class="metric-label">Universe</div>
-            <div class="metric-value">CinemorphSRL</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Portals Online</div>
-            <div class="metric-value" id="portalCount">2</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Nova State</div>
-            <div class="metric-value" id="novaState">READY</div>
+      <!-- Deployment Panel -->
+      <section class="card">
+        <header class="card-header">
+          <h2>Deployment Panel</h2>
+          <span class="chip chip-warn">Manual Control</span>
+        </header>
+        <div class="card-body deployment-grid">
+          <button class="btn" data-action="local-preview">
+            Local Preview
+          </button>
+          <button class="btn" data-action="vercel-deploy">
+            Vercel Deploy
+          </button>
+          <button class="btn" data-action="refresh-env">
+            Refresh Environment
+          </button>
+        </div>
+        <footer class="card-footer">
+          <p class="hint">
+            All buttons here are safe placeholders. They log to the console
+            panel below so you can see activity without triggering real cloud changes.
+          </p>
+        </footer>
+      </section>
+
+      <!-- Log Console -->
+      <section class="card card-log">
+        <header class="card-header">
+          <h2>Nova Console</h2>
+          <button id="clearLogButton" class="chip chip-clear">Clear</button>
+        </header>
+        <div class="card-body log-body">
+          <pre id="logOutput" class="log-output"></pre>
+        </div>
+      </section>
+    </section>
+
+    <!-- RIGHT COLUMN: WORK ENVIRONMENT / PORTALS -->
+    <section class="column column-right">
+      <section class="card card-workspace">
+        <header class="card-header">
+          <h2>Work Environment</h2>
+          <span class="chip chip-ok">Online</span>
+        </header>
+        <div class="card-body">
+          <p class="hint">
+            Choose a portal tile to “open” that area. Right now this updates
+            the console and highlights the tile — perfect for testing that
+            everything is running inside Vercel.
+          </p>
+
+          <div class="workspace-grid" id="workspaceGrid">
+            <button class="portal-tile" data-portal="#/cineverse-creator/">
+              <h3>Cineverse Creator</h3>
+              <p>Movie builder portal inside Samantha’s Universe.</p>
+            </button>
+
+            <button class="portal-tile" data-portal="#/game-portal/">
+              <h3>Game Portal</h3>
+              <p>Design, test, and launch interactive game missions.</p>
+            </button>
+
+            <button class="portal-tile" data-portal="#/acemycert/">
+              <h3>AceMyCert</h3>
+              <p>Certification engine and exam control panel.</p>
+            </button>
+
+            <button class="portal-tile" data-portal="#/marketplace/">
+              <h3>Marketplace</h3>
+              <p>Future hub for add-ons, bundles, and services.</p>
+            </button>
           </div>
         </div>
-      </div>
+      </section>
     </section>
-
-    <!-- Deployment Info Panel -->
-    <div id="deployInfoPanel" class="deploy-info hidden">
-      <h3>Deployment Details</h3>
-      <p id="deploySummary">
-        Nova will trigger a fresh build of the CinemorphSRL dashboard and connected portals.
-        This includes UI updates, logic patches, and route refreshes committed to <b>main</b>.
-      </p>
-
-      <ul class="deploy-list">
-        <li>✔ Dashboard UI update</li>
-        <li>✔ Nova button activation pipeline</li>
-        <li>✔ Portal routing refresh</li>
-        <li>✔ Zero expected downtime</li>
-        <li>✔ Automatic rollback available</li>
-      </ul>
-
-      <div class="deploy-cta">
-        <button id="learnMoreBtn" class="btn info">Learn More</button>
-        <button id="confirmDeployBtn" class="btn confirm">🜁 Confirm Deployment</button>
-      </div>
-    </div>
-
-    <!-- Portals -->
-    <section class="section">
-      <div class="section-head">
-        <h3>Portals</h3>
-        <p>Jump between portals instantly.</p>
-      </div>
-
-      <div class="portal-grid">
-        <a class="portal-card gold" href="/cineverse-creator/">
-          <div class="portal-icon">🎬</div>
-          <div class="portal-meta">
-            <h4>Cineverse Movie Portal</h4>
-            <p>Create, preview, and publish drops.</p>
-          </div>
-          <div class="portal-cta">Open</div>
-        </a>
-
-        <a class="portal-card" href="/game-portal/">
-          <div class="portal-icon">🎮</div>
-          <div class="portal-meta">
-            <h4>Game Portal</h4>
-            <p>Builder, launches, and play tests.</p>
-          </div>
-          <div class="portal-cta">Open</div>
-        </a>
-      </div>
-    </section>
-
-    <!-- Deployment Control Panel (status-only) -->
-    <section class="panel deploy-panel">
-      <div class="panel-head">
-        <h3>Deployment Control Panel</h3>
-        <p class="muted">Status view only. Real deploy runs from 🜁 NOVA.</p>
-      </div>
-
-      <div class="deploy-grid">
-        <button id="deployCineBtn"  class="deploy-btn cine">Cineverse Status</button>
-        <button id="deployGameBtn"  class="deploy-btn game">Game Status</button>
-        <button id="deployVoiceBtn" class="deploy-btn voice">Voice Status</button>
-        <button id="deployAllBtn"   class="deploy-btn all">All Status</button>
-      </div>
-    </section>
-
-    <!-- Work Environment -->
-    <section class="panel oasis-panel">
-      <div class="oasis-head">
-        <h3>Work Environment</h3>
-        <p class="muted">Step into your Oasis Command Room.</p>
-      </div>
-
-      <div class="oasis-card" id="oasisCard" role="button" aria-label="Open Oasis">
-        <div class="oasis-overlay">OPEN OASIS</div>
-      </div>
-    </section>
-
-    <!-- Nova Log -->
-    <section class="section">
-      <div class="section-head">
-        <h3>Nova Log</h3>
-      </div>
-      <div id="novaLog" class="log"></div>
-    </section>
-
   </main>
-
-  <footer class="footer">
-    <small>© Samantha’s One-Click System™ — All rights reserved.</small>
-  </footer>
 
   <script src="main.js"></script>
 </body>
