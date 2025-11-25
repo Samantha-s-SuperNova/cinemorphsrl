@@ -1,9 +1,8 @@
 /* ============================================================
-   CineVerse Movie Portal — SuperNova Full main.js (Version done)
-   - Alive Nova UI
-   - Local logging + status
-   - No PAT / no remote deploy yet
-   - Matches Samantha’s Universe flow
+   CineVerse Movie Portal — SuperNova clean main.js (deploy removed)
+   - No deploy button
+   - No deploy simulation
+   - Nova log + status + navigation preserved
 ============================================================ */
 
 console.log("CineVerse main.js loaded");
@@ -95,52 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -------------------------------
-//  NOVA BUTTON (CLEAN MODE)
-// -------------------------------
-const novaButton = document.getElementById("novaButton");
-if (novaButton) {
-  novaButton.addEventListener("click", () => {
-    appendLog("RUN", "NOVA", "Launch & Deploy pressed (clean mode).", "");
-    pulseButton(novaButton);
-    simulateDeploySequence();
-  });
-}
-
-// Give visible activity even without deploy
-function simulateDeploySequence() {
-  appendLog("INFO", "NOVA", "Scanning CineVerse objects for updates…", "dim");
-
-  const phases = [
-    "Checking movie library folders…",
-    "Validating metadata…",
-    "Preparing thumbnails & previews…",
-    "Syncing Universe routes…",
-    "Marking deploy ready bundle…"
-  ];
-
-  let i = 0;
-  const tick = setInterval(() => {
-    appendLog("INFO", "SCAN", phases[i], "dim");
-    i++;
-    if (i >= phases.length) {
-      clearInterval(tick);
-      appendLog("DONE", "NOVA", "CineVerse scan complete. No remote deploy triggered yet.", "");
-    }
-  }, 650);
-}
-
-// simple glow pulse
-function pulseButton(btn) {
-  btn.classList.add("nova-pulse");
-  btn.style.boxShadow = "0 0 18px rgba(37,99,235,.9)";
-  setTimeout(() => {
-    btn.classList.remove("nova-pulse");
-    btn.style.boxShadow = "";
-  }, 1200);
-}
-
-// -------------------------------
-//  ENTER / ROADMAP HOOKS (if present)
+//  ENTER / ROADMAP HOOKS
 // -------------------------------
 document.getElementById("btnEnter")?.addEventListener("click", () => {
   setStatus("In progress");
