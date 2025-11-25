@@ -56,18 +56,43 @@ function setSystemStatus(mode, text) {
   }
 }
 
+// ---------- Active Task helpers ----------
+function setActiveTask(taskText) {
+  const el = document.getElementById("activeTaskValue");
+  if (!el) return;
+  el.textContent = taskText ? taskText : "None";
+}
+
+function startTransientTask(label, durationMs) {
+  setActiveTask(label);
+  setTimeout(() => {
+    // only clear if the same task is still showing
+    const el = document.getElementById("activeTaskValue");
+    if (el && el.textContent === label) {
+      setActiveTask(null);
+    }
+  }, durationMs);
+}
+
 // ---------- Nova Button (AI only, no deploy) ----------
 function handleNovaPress() {
   const btn = document.getElementById("novaButton");
   if (btn) {
     btn.classList.add("active");
-    setTimeout(() => btn.classList.remove("active"), 180);
+    setTimeout(() => btn.classList.remove("active"), 200);
   }
 
   setSystemStatus("listening", "System: Listening");
-  appendLog(
-    `${getTimeStamp()} [NOVA] Listening… type a command below when you're ready.`
-  );
+  appendLog(`${getTimeStamp()} [NOVA] Listening…`);
+
+  // mark as active task for 5 seconds
+  startTransientTask("Listening for command input…", 5000);
+
+  // AUTO-RESET AFTER 5 SECONDS
+  setTimeout(() => {
+    setSystemStatus("online", "System: Online");
+    appendLog(`${getTimeStamp()} [SYSTEM] Listening timeout — reset.`);
+  }, 5000);
 }
 
 // ---------- Typed Command Handling ----------
@@ -75,7 +100,7 @@ function generateNovaReply(commandText) {
   const lower = commandText.toLowerCase();
 
   if (lower.includes("status")) {
-    return "Status: dashboard online, Nova engine listening, portals ready in Samantha’s Universe.";
+    return "Status: dashboard online, Nova engine listening when requested, portals ready in Samantha’s Universe.";
   }
   if (lower.includes("voice")) {
     return "Voice Simulator will handle your real-time voice interface and testing once wired to the backend.";
@@ -90,7 +115,7 @@ function generateNovaReply(commandText) {
     return "Reminder: the pink Nova orb never deploys anything. Use the Deployment Panel buttons only.";
   }
 
-  // Short default, so it doesn't feel repetitive
+  // Short default so it doesn’t feel repetitive
   return "Command noted in Samantha’s Universe console.";
 }
 
@@ -101,41 +126,47 @@ function sendCommand() {
   const text = input.value.trim();
   if (!text) return;
 
-  // Log user command
   appendLog(`${getTimeStamp()} [USER] ${text}`);
 
-  // Generate Nova reply
   const reply = generateNovaReply(text);
   appendLog(`${getTimeStamp()} [NOVA] ${reply}`);
 
-  // Reset input & system status
   input.value = "";
   setSystemStatus("online", "System: Online");
 }
 
-// ---------- Deployment Panel (log-only) ----------
+// ---------- Deployment Panel (log-only, but updates Active Task) ----------
 function handleDeploymentAction(actionKey) {
   let message;
+  let taskLabel;
 
   switch (actionKey) {
     case "local-preview":
       message =
         "Local preview requested. Open this index.html in your browser to review the dashboard.";
+      taskLabel = "Preparing local preview…";
       break;
     case "vercel-deploy":
       message =
         "Vercel deploy requested (log-only). Use your Vercel dashboard when you’re ready.";
+      taskLabel = "Vercel deploy (log-only)…";
       break;
     case "refresh-env":
       message =
         "Environment refresh requested. Reload the page or redeploy after file changes.";
+      taskLabel = "Refreshing environment (log-only)…";
       break;
     default:
       message = `Unknown deployment action: ${actionKey}`;
+      taskLabel = null;
       break;
   }
 
   appendLog(`${getTimeStamp()} [DEPLOY] ${message}`);
+
+  if (taskLabel) {
+    startTransientTask(taskLabel, 5000);
+  }
 }
 
 // ---------- Portal Tiles ----------
@@ -164,55 +195,51 @@ function clearLog() {
 
 // ---------- INIT ----------
 function initDashboard() {
+  appendLog(`${getTimeStamp()} [SYSTEM] Dashboard loaded.`);
   appendLog(
-    `${getTimeStamp()} [SYSTEM] Samantha's SuperNova Dashboard initialized.`
-  );
-  appendLog(
-    `${getTimeStamp()} [UNIVERSE] Ready. Visual core online; Work Environment waiting for your next object.`
+    `${getTimeStamp()} [UNIVERSE] Visual core online; Work Environment waiting for your next object.`
   );
 
   setSystemStatus("online", "System: Online");
+  setActiveTask(null);
 
   // Nova button
   const novaButton = document.getElementById("novaButton");
   if (novaButton) {
-    novaButton.addEventListener("click", handleNovaPress);
+    novaButton.onclick = handleNovaPress;
   }
 
   // Deploy buttons
   document.querySelectorAll(".deploy-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.onclick = () => {
       const action = btn.getAttribute("data-action");
-      if (action) handleDeploymentAction(action);
-    });
+      handleDeploymentAction(action);
+    };
   });
 
   // Portal tiles
   document.querySelectorAll(".portal-tile").forEach((tile) => {
-    tile.addEventListener("click", () => handlePortalClick(tile));
+    tile.onclick = () => handlePortalClick(tile);
   });
 
-  // Command send button
+  // Send button
   const sendButton = document.getElementById("sendCommand");
-  if (sendButton) {
-    sendButton.addEventListener("click", sendCommand);
-  }
+  if (sendButton) sendButton.onclick = sendCommand;
 
-  // Enter key for command input
+  // Enter key for input
   const input = document.getElementById("novaInput");
   if (input) {
-    input.addEventListener("keypress", (e) => {
+    input.onkeypress = (e) => {
       if (e.key === "Enter") {
+        e.preventDefault();
         sendCommand();
       }
-    });
+    };
   }
 
   // Clear log button
   const clearButton = document.getElementById("clearLogButton");
-  if (clearButton) {
-    clearButton.addEventListener("click", clearLog);
-  }
+  if (clearButton) clearButton.onclick = clearLog;
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);
