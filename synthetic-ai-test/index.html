@@ -6,10 +6,8 @@
   <title>Samantha’s Universe — SuperNova Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body class="app">
-
-  <!-- ================= TOP BAR ================= -->
+  <!-- TOP BAR -->
   <header class="topbar">
     <div class="brand">
       <h1>Samantha’s Universe</h1>
@@ -17,31 +15,27 @@
     </div>
   </header>
 
-  <!-- ================= MAIN LAYOUT ================= -->
+  <!-- MAIN LAYOUT -->
   <main class="layout">
-
-    <!-- -------- LEFT COLUMN: MAIN PORTALS -------- -->
+    <!-- LEFT: PORTALS -->
     <section id="portalsColumn" data-sai="layout">
       <h2>Main Portals</h2>
-
       <a class="portal-card" data-sai="portal">Cineverse Creator</a>
       <a class="portal-card" data-sai="portal">Game Builder</a>
       <a class="portal-card" data-sai="portal">Voice Studio</a>
       <a class="portal-card" data-sai="portal">Marketplace</a>
     </section>
 
-    <!-- -------- RIGHT COLUMN: WORK ENVIRONMENT -------- -->
+    <!-- RIGHT: WORK ENVIRONMENT -->
     <section id="workEnvColumn" data-sai="layout">
       <h2>Work Environment</h2>
-
       <div class="work-card" data-sai="work-env">Online — Vercel</div>
       <div class="work-card" data-sai="work-env">Online — Firebase</div>
       <div class="work-card" data-sai="work-env">Local — Dev Sandbox</div>
     </section>
-
   </main>
 
-  <!-- ================= SYNTHETIC AI CONTROL STRIP ================= -->
+  <!-- SYNTHETIC AI PANEL -->
   <section class="synthetic-ai-panel">
     <h2>Synthetic AI — Incremental Fixes</h2>
 
@@ -52,12 +46,43 @@
     </div>
 
     <div id="syntheticAiLog" class="synthetic-ai-log"></div>
+
+    <!-- COMMAND BRIDGE TRIGGER BUTTON -->
+    <button id="commandBridgeToggle" class="command-bridge-btn" type="button">
+      Command Bridge
+    </button>
   </section>
 
-  <!-- ================= SCRIPTS ================= -->
+  <!-- COMMAND BRIDGE CHAT PANEL -->
+  <div id="commandBridgePanel" class="cb-panel cb-panel-hidden">
+    <div class="cb-chat-header">
+      <span>Command Bridge — Nova ↔ SAI</span>
+      <button id="cbClose" class="cb-close-btn" type="button">×</button>
+    </div>
+
+    <div id="cbMessages" class="cb-messages">
+      <!-- Messages will be injected here -->
+    </div>
+
+    <div class="cb-controls">
+      <button id="cbApplyFixes" class="cb-apply-btn" type="button">
+        Apply SAI Fixes
+      </button>
+    </div>
+
+    <div class="cb-input-row">
+      <input
+        id="cbInput"
+        type="text"
+        placeholder="Send a thought to Nova…"
+        autocomplete="off"
+      />
+      <button id="cbSend" class="cb-send-btn" type="button">Send</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
   <script src="synthetic-ai-config.js"></script>
   <script src="synthetic-ai-engine.js"></script>
-
 </body>
 </html>
-
