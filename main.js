@@ -1,3 +1,7 @@
+// AUTO MODE: when true, deploy runs immediately with no confirm panel
+const AUTO_CONFIRM_DEPLOY = false; // set true when you want hands-off runs
+let novaDeploying = false;
+
 /* ============================================================
    SUPERNOVA DASHBOARD — DEPLOY ENABLED
    - 🜁 NOVA button = real deploy
