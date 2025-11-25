@@ -1,13 +1,13 @@
 /* ============================================================
    SAMANTHA'S SUPERNOVA DASHBOARD — LIVE DEPLOY SYSTEM
-   This file now correctly:
-   - Handles POST deploy triggers
-   - Sends JSON to /api/deploy
-   - Logs deploy events
-   - Wires Cine/Game/Voice/All buttons
-   ============================================================ */
+   Clean, functional version:
+   - POST deploy calls to /api/deploy
+   - Proper button wiring
+   - Logs deploy actions
+   - No duplicate logic
+============================================================ */
 
-console.log("Nova main.js loaded (live POST deploy enabled).");
+console.log("Nova main.js loaded (POST deploy active).");
 
 /* ------------------------------------------------------------
    DOM REFERENCES
@@ -16,6 +16,7 @@ const deployCineBtn  = document.getElementById("deployCineBtn");
 const deployGameBtn  = document.getElementById("deployGameBtn");
 const deployVoiceBtn = document.getElementById("deployVoiceBtn");
 const deployAllBtn   = document.getElementById("deployAllBtn");
+
 const deployNowTop   = document.getElementById("deployNowTop");
 
 const missionText    = document.getElementById("missionText");
@@ -23,76 +24,81 @@ const missionBanner  = document.getElementById("missionBanner");
 const novaLog        = document.getElementById("novaLog");
 const novaState      = document.getElementById("novaState");
 
+
 /* ------------------------------------------------------------
-   DEPLOY FUNCTION — CALLS /api/deploy (POST)
+   DEPLOY FUNCTION — POST request to /api/deploy
 ------------------------------------------------------------ */
-async function triggerDeploy(siteName) {
+async function triggerDeploy(name) {
   try {
     const res = await fetch("/api/deploy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: `Nova Deploy Triggered: ${siteName}`,
-        files: [],          // We are not auto-committing files yet
-        site: siteName      // optional, but good for logging
+        message: `Nova Deploy Triggered: ${name}`,
+        files: [],      // no auto commits yet
+        site: name
       })
     });
 
     const json = await res.json();
 
     if (!res.ok || !json.ok) {
-      throw new Error(json.error || "Unknown deploy error");
+      throw new Error(json.error || "Deploy error");
     }
 
-    log(`Deploy triggered for: ${siteName.toUpperCase()}`);
+    log(`Deploy triggered for: ${name.toUpperCase()}`);
 
     alert(
       `Nova Deploy Started\n\n` +
-      `Module: ${siteName.toUpperCase()}\n` +
+      `Module: ${name.toUpperCase()}\n` +
       `Message: ${json.message || "Triggered"}\n\n` +
       `Vercel is now deploying in the background.`
     );
 
   } catch (err) {
     console.error(err);
-    log(`Deploy FAILED for ${siteName.toUpperCase()}`);
-    alert(`Deploy FAILED for ${siteName.toUpperCase()}`);
+    log(`Deploy FAILED for ${name.toUpperCase()}`);
+    alert(`Deploy FAILED for ${name.toUpperCase()}`);
   }
 }
 
+
 /* ------------------------------------------------------------
-   WIRE BUTTONS
+   BUTTON WIRING
 ------------------------------------------------------------ */
 function wireButtons() {
   if (wireButtons.done) return;
   wireButtons.done = true;
 
-  deployCineBtn?.addEventListener("click", () => triggerDeploy("Cineverse Portal"));
-  deployGameBtn?.addEventListener("click", () => triggerDeploy("Game Portal"));
-  deployVoiceBtn?.addEventListener("click", () => triggerDeploy("Voice Portal"));
-  deployAllBtn?.addEventListener("click", () => triggerDeploy("All Portals"));
+  deployCineBtn?.addEventListener("click", () => triggerDeploy("cine"));
+  deployGameBtn?.addEventListener("click", () => triggerDeploy("game"));
+  deployVoiceBtn?.addEventListener("click", () => triggerDeploy("voice"));
+  deployAllBtn?.addEventListener("click", () => triggerDeploy("all"));
 
-  deployNowTop?.addEventListener("click", () => triggerDeploy("Cineverse Portal"));
+  // Top banner deploy button
+  deployNowTop?.addEventListener("click", () => triggerDeploy("cine"));
 }
 
 wireButtons();
 
+
 /* ------------------------------------------------------------
-   LOG SYSTEM
+   LOGGING (Dashboard panel)
 ------------------------------------------------------------ */
 function log(text) {
   const time = new Date().toLocaleString();
-  const item = document.createElement("div");
-  item.className = "log-item";
-  item.innerHTML = `
+  const row = document.createElement("div");
+  row.className = "log-item";
+  row.innerHTML = `
     <div>${text}</div>
     <div class="log-time">${time}</div>
   `;
-  novaLog.prepend(item);
+  novaLog.prepend(row);
 }
 
+
 /* ------------------------------------------------------------
-   SIMPLE MISSION DISPLAY
+   MISSION STATUS DISPLAY
 ------------------------------------------------------------ */
 function updateMission() {
   missionText.textContent = `"Cineverse Portal UI expansion" is ready to deploy.`;
@@ -102,4 +108,4 @@ function updateMission() {
 
 updateMission();
 
-console.log("Nova main.js fully wired and ready.");
+console.log("Nova main.js is fully online.");
