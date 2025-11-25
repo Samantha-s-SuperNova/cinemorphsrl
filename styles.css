@@ -1,13 +1,10 @@
 /* =============== ROOT + GLOBAL =============== */
 :root {
   --bg: #050713;
-  --bg-alt: #0b0f20;
   --card-bg: rgba(9, 12, 28, 0.98);
   --card-border: rgba(255, 255, 255, 0.07);
   --accent: #f9c85b;
   --accent-strong: #ffd773;
-  --accent-soft: rgba(249, 200, 91, 0.18);
-  --danger: #ff5573;
   --text-main: #fefefe;
   --text-sub: #a7b3df;
   --chip-bg: rgba(255, 255, 255, 0.04);
@@ -185,7 +182,7 @@ body.app {
 /* =============== LAYOUT =============== */
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.45fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.4fr);
   gap: 18px;
   padding: 18px 18px 22px;
   flex: 1;
@@ -304,13 +301,17 @@ body.app {
   color: var(--text-main);
 }
 
-/* Status list */
+/* =============== STATUS CARD =============== */
+.card-status {
+  max-height: 260px;
+}
+
 .status-list {
   list-style: none;
-  margin: 0;
+  margin: 0 0 6px;
   padding: 0;
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .status-list li {
@@ -328,7 +329,93 @@ body.app {
   color: var(--accent-strong);
 }
 
-/* =============== BUTTONS =============== */
+/* Upcoming block */
+.upcoming-block {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.upcoming-block h3 {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-main);
+}
+
+.upcoming-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 0.75rem;
+  color: var(--text-sub);
+}
+
+/* =============== NOVA CONSOLE (CHAT STYLE) =============== */
+.card-log {
+  flex: 1;
+  min-height: 260px;
+}
+
+.log-body {
+  background: radial-gradient(
+    circle at 0 0,
+    rgba(0, 0, 0, 0.7),
+    rgba(4, 5, 14, 0.98)
+  );
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  overflow: hidden;
+}
+
+.log-output {
+  margin: 0;
+  white-space: pre-wrap;      /* wrap like chat */
+  word-wrap: break-word;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #e2e8ff;
+  max-height: 230px;
+}
+
+/* Command bar (big like FB input) */
+.command-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+#novaInput {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.45);
+  color: #fefefe;
+  font-size: 0.82rem;
+}
+
+#novaInput::placeholder {
+  color: rgba(231, 233, 255, 0.5);
+}
+
+/* =============== DEPLOYMENT CARD =============== */
+.card-deploy .deployment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Buttons */
 .btn {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -357,69 +444,10 @@ body.app {
   transform: translateY(1px) scale(0.98);
 }
 
-/* Deployment buttons grid */
-.deployment-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
 /* Small button */
 .small-btn {
-  padding: 6px 12px;
-  font-size: 0.75rem;
-}
-
-/* =============== LOG =============== */
-.card-log {
-  max-height: 260px;
-}
-
-.log-body {
-  background: radial-gradient(
-    circle at 0 0,
-    rgba(0, 0, 0, 0.7),
-    rgba(4, 5, 14, 0.98)
-  );
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 8px;
-  overflow: hidden;
-}
-
-.log-output {
-  margin: 0;
-  white-space: pre-wrap;      /* wrap like a chat */
-  word-wrap: break-word;      /* break long lines */
-  overflow-x: hidden;         /* no sideways scroll */
-  overflow-y: auto;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 0.72rem;
-  line-height: 1.4;
-  color: #d6e2ff;
-  max-height: 210px;
-}
-
-/* Command bar */
-.command-bar {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-  padding-top: 7px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.09);
-}
-
-#novaInput {
-  flex: 1;
-  padding: 7px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(0, 0, 0, 0.45);
-  color: #fefefe;
-  font-size: 0.8rem;
+  padding: 7px 15px;
+  font-size: 0.78rem;
 }
 
 /* =============== WORK ENVIRONMENT =============== */
