@@ -11,7 +11,7 @@
   <!-- ========== TOP BAR ========== -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"></div>
+      <div class="brand-mark"></div>
       <div>
         <h1>CinemorphSRL</h1>
         <p class="sub">SuperNova Control Deck — Jet Black + Gold Edition</p>
@@ -24,7 +24,7 @@
         <span class="label">System: Online</span>
       </div>
 
-      <button id="novaButton" class="nova-button" aria-label="Nova Button">
+      <button id="novaButton" class="nova-button">
         <span class="nova-glow"></span>
         <span class="nova-inner">
           <span class="nova-orb"></span>
@@ -34,11 +34,13 @@
     </div>
   </header>
 
-  <!-- ========== MAIN LAYOUT ========== -->
+  <!-- ========== MAIN ========== -->
   <main class="layout">
-    <!-- LEFT COLUMN: STATUS + DEPLOYMENT + LOG -->
+
+    <!-- LEFT COLUMN -->
     <section class="column column-left">
-      <!-- System Status Card -->
+
+      <!-- Universe Status -->
       <section class="card">
         <header class="card-header">
           <h2>Universe Status</h2>
@@ -46,18 +48,9 @@
         </header>
         <div class="card-body">
           <ul class="status-list">
-            <li>
-              <span class="label">Visual Core</span>
-              <span class="value">Online</span>
-            </li>
-            <li>
-              <span class="label">Nova Engine</span>
-              <span class="value">Listening</span>
-            </li>
-            <li>
-              <span class="label">Portal Map</span>
-              <span class="value">Linked</span>
-            </li>
+            <li><span class="label">Visual Core</span> <span class="value">Online</span></li>
+            <li><span class="label">Nova Engine</span> <span class="value">Listening</span></li>
+            <li><span class="label">Portal Map</span> <span class="value">Linked</span></li>
           </ul>
         </div>
       </section>
@@ -69,74 +62,67 @@
           <span class="chip chip-warn">Manual Control</span>
         </header>
         <div class="card-body deployment-grid">
-          <button class="btn" data-action="local-preview">
-            Local Preview
-          </button>
-          <button class="btn" data-action="vercel-deploy">
-            Vercel Deploy
-          </button>
-          <button class="btn" data-action="refresh-env">
-            Refresh Environment
-          </button>
+          <button class="btn action-btn" data-action="local-preview">Local Preview</button>
+          <button class="btn action-btn" data-action="vercel-deploy">Vercel Deploy</button>
+          <button class="btn action-btn" data-action="refresh-env">Refresh Environment</button>
         </div>
         <footer class="card-footer">
-          <p class="hint">
-            All buttons here are safe placeholders. They log to the console
-            panel below so you can see activity without triggering real cloud changes.
-          </p>
+          <p class="hint">All controls here are safe — they log activity only.</p>
         </footer>
       </section>
 
-      <!-- Log Console -->
+      <!-- Nova Console -->
       <section class="card card-log">
         <header class="card-header">
           <h2>Nova Console</h2>
           <button id="clearLogButton" class="chip chip-clear">Clear</button>
         </header>
+
         <div class="card-body log-body">
           <pre id="logOutput" class="log-output"></pre>
         </div>
+
+        <!-- Nova Command Bar -->
+        <footer class="command-bar">
+          <input id="novaInput" type="text" placeholder="Type a command for Nova…" />
+          <button id="sendCommand" class="btn small-btn">Send</button>
+        </footer>
       </section>
     </section>
 
-    <!-- RIGHT COLUMN: WORK ENVIRONMENT / PORTALS -->
+    <!-- RIGHT COLUMN -->
     <section class="column column-right">
       <section class="card card-workspace">
         <header class="card-header">
           <h2>Work Environment</h2>
           <span class="chip chip-ok">Online</span>
         </header>
+
         <div class="card-body">
-          <p class="hint">
-            Choose a portal tile to “open” that area. Right now this updates
-            the console and highlights the tile — perfect for testing that
-            everything is running inside Vercel.
-          </p>
+          <p class="hint">Select a portal to open its environment.</p>
 
           <div class="workspace-grid" id="workspaceGrid">
+
             <button class="portal-tile" data-portal="#/cineverse-creator/">
               <h3>Cineverse Creator</h3>
-              <p>Movie builder portal inside Samantha’s Universe.</p>
+              <p>Movie builder portal.</p>
             </button>
 
             <button class="portal-tile" data-portal="#/game-portal/">
               <h3>Game Portal</h3>
-              <p>Design, test, and launch interactive game missions.</p>
-            </button>
-
-            <button class="portal-tile" data-portal="#/acemycert/">
-              <h3>AceMyCert</h3>
-              <p>Certification engine and exam control panel.</p>
+              <p>Design and launch games.</p>
             </button>
 
             <button class="portal-tile" data-portal="#/marketplace/">
               <h3>Marketplace</h3>
-              <p>Future hub for add-ons, bundles, and services.</p>
+              <p>Add-ons and digital upgrades.</p>
             </button>
+
           </div>
         </div>
       </section>
     </section>
+
   </main>
 
   <script src="main.js"></script>
