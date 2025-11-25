@@ -8,13 +8,13 @@
 </head>
 
 <body class="app">
-  <!-- ========== TOP BAR ========== -->
+  <!-- ========= TOP BAR ========= -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-mark"></div>
-      <div>
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div class="brand-text">
         <h1>CinemorphSRL</h1>
-        <p class="sub">SuperNova Control Deck — Jet Black + Gold Edition</p>
+        <p class="sub">SuperNova Control Deck — Samantha’s Universe</p>
       </div>
     </div>
 
@@ -24,50 +24,70 @@
         <span class="label">System: Online</span>
       </div>
 
-      <button id="novaButton" class="nova-button">
-        <span class="nova-glow"></span>
-        <span class="nova-inner">
-          <span class="nova-orb"></span>
-          <span class="nova-text">Call Nova</span>
-        </span>
+      <!-- Nova Activation Glyph Button (AI only, NO DEPLOY) -->
+      <button id="novaButton" class="nova-button" aria-label="Activate Nova AI">
+        <span class="nova-button-glow"></span>
+        <div class="nova-button-shell">
+          <img
+            src="nova-glyph.png"
+            alt="Nova activation glyph"
+            class="nova-glyph"
+          />
+        </div>
       </button>
     </div>
   </header>
 
-  <!-- ========== MAIN ========== -->
+  <!-- ========= MAIN LAYOUT ========= -->
   <main class="layout">
-
-    <!-- LEFT COLUMN -->
+    <!-- ===== LEFT COLUMN ===== -->
     <section class="column column-left">
 
-      <!-- Universe Status -->
+      <!-- Universe Status Card -->
       <section class="card">
         <header class="card-header">
           <h2>Universe Status</h2>
-          <span class="chip chip-ok">READY</span>
+          <span class="chip chip-ok">Ready</span>
         </header>
         <div class="card-body">
           <ul class="status-list">
-            <li><span class="label">Visual Core</span> <span class="value">Online</span></li>
-            <li><span class="label">Nova Engine</span> <span class="value">Listening</span></li>
-            <li><span class="label">Portal Map</span> <span class="value">Linked</span></li>
+            <li>
+              <span class="label">Visual Core</span>
+              <span class="value">Online</span>
+            </li>
+            <li>
+              <span class="label">Nova Engine</span>
+              <span class="value">Linked</span>
+            </li>
+            <li>
+              <span class="label">Portal Map</span>
+              <span class="value">Synchronized</span>
+            </li>
           </ul>
         </div>
       </section>
 
-      <!-- Deployment Panel -->
+      <!-- Deployment Panel (separate from Nova, log-only) -->
       <section class="card">
         <header class="card-header">
           <h2>Deployment Panel</h2>
           <span class="chip chip-warn">Manual Control</span>
         </header>
         <div class="card-body deployment-grid">
-          <button class="btn action-btn" data-action="local-preview">Local Preview</button>
-          <button class="btn action-btn" data-action="vercel-deploy">Vercel Deploy</button>
-          <button class="btn action-btn" data-action="refresh-env">Refresh Environment</button>
+          <button class="btn deploy-btn" data-action="local-preview">
+            Local Preview
+          </button>
+          <button class="btn deploy-btn" data-action="vercel-deploy">
+            Vercel Deploy
+          </button>
+          <button class="btn deploy-btn" data-action="refresh-env">
+            Refresh Environment
+          </button>
         </div>
         <footer class="card-footer">
-          <p class="hint">All controls here are safe — they log activity only.</p>
+          <p class="hint">
+            These controls are <strong>log-only</strong> for now — they never auto-deploy.
+          </p>
         </footer>
       </section>
 
@@ -82,15 +102,20 @@
           <pre id="logOutput" class="log-output"></pre>
         </div>
 
-        <!-- Nova Command Bar -->
+        <!-- Command Bar for typed Nova commands -->
         <footer class="command-bar">
-          <input id="novaInput" type="text" placeholder="Type a command for Nova…" />
+          <input
+            id="novaInput"
+            type="text"
+            placeholder="Type a command for Nova…"
+            autocomplete="off"
+          />
           <button id="sendCommand" class="btn small-btn">Send</button>
         </footer>
       </section>
     </section>
 
-    <!-- RIGHT COLUMN -->
+    <!-- ===== RIGHT COLUMN ===== -->
     <section class="column column-right">
       <section class="card card-workspace">
         <header class="card-header">
@@ -99,30 +124,34 @@
         </header>
 
         <div class="card-body">
-          <p class="hint">Select a portal to open its environment.</p>
+          <p class="hint">
+            Select a portal to route your focus inside Samantha’s Universe.
+          </p>
 
           <div class="workspace-grid" id="workspaceGrid">
-
             <button class="portal-tile" data-portal="#/cineverse-creator/">
               <h3>Cineverse Creator</h3>
-              <p>Movie builder portal.</p>
+              <p>Movie builder portal for cinematic universes.</p>
             </button>
 
             <button class="portal-tile" data-portal="#/game-portal/">
               <h3>Game Portal</h3>
-              <p>Design and launch games.</p>
+              <p>Design, test, and launch interactive missions.</p>
+            </button>
+
+            <button class="portal-tile" data-portal="#/voice-simulator/">
+              <h3>Voice Simulator</h3>
+              <p>Real-time voice interface and simulation engine.</p>
             </button>
 
             <button class="portal-tile" data-portal="#/marketplace/">
               <h3>Marketplace</h3>
-              <p>Add-ons and digital upgrades.</p>
+              <p>Future hub for add-ons, bundles, and upgrades.</p>
             </button>
-
           </div>
         </div>
       </section>
     </section>
-
   </main>
 
   <script src="main.js"></script>
