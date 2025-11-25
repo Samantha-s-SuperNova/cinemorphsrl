@@ -1,1 +1,89 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: #0a1020;
+  color: white;
+}
+
+.topbar {
+  padding: 1rem;
+  background: rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.topbar .brand h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.sub {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.layout {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+/* Columns */
+#portalsColumn, #workEnvColumn {
+  width: 50%;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.portal-card, .work-card {
+  display: block;
+  background: rgba(255,255,255,0.04);
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* Synthetic AI Panel */
+.synthetic-ai-panel {
+  margin: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.04);
+  border-left: 3px solid #9e6bff;
+  border-radius: 6px;
+}
+
+.synthetic-ai-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.synthetic-ai-actions button {
+  padding: 0.35rem 0.75rem;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.synthetic-ai-actions button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.synthetic-ai-log {
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  padding-top: 0.25rem;
+}
 
