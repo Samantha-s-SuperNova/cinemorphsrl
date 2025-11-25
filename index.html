@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <!-- 🜁 NOVA BUTTON (DASHBOARD VERSION — FULL TEXT) -->
+    <!-- 🜁 NOVA BUTTON -->
     <div class="top-actions">
       <button id="novaGlobalBtn" class="nova-btn nova-cosmic" title="🜁 NOVA">
         <span class="nova-glyph">🜁</span>
@@ -29,15 +29,14 @@
   <main class="wrap">
 
     <!-- Mission Banner -->
-   
     <section class="hero card">
       <div class="hero-left">
         <h2 class="hero-title">Mission Status</h2>
         <p class="hero-sub">Your portals are wired and deploy ready.</p>
 
-        <div id="missionBanner" class="blink-banner">
+        <div id="missionBanner" class="blink-banner actionable">
           <span class="blink-dot"></span>
-          <span id="missionText">"System standing by for Nova deployment."</span>
+          <span id="missionText">System standing by for Nova deployment — click to review.</span>
         </div>
       </div>
 
@@ -59,27 +58,55 @@
       </div>
     </section>
 
+    <!-- Deployment Info Panel -->
     <div id="deployInfoPanel" class="deploy-info hidden">
-     <h3>Deployment Details</h3>
-     <p id="deploySummary">
+      <h3>Deployment Details</h3>
+      <p id="deploySummary">
         Nova will trigger a fresh build of the CinemorphSRL Universe dashboard
         and connected portals. This includes UI updates, logic patches, and asset
         changes committed to main.
-    </p>
+      </p>
 
-    <ul class="deploy-list">
-      <li>✔ Dashboard UI update</li>
-      <li>✔ Nova button activation pipeline</li>
-      <li>✔ Portal routing refresh</li>
-      <li>✔ Zero expected downtime</li>
-      <li>✔ Automatic rollback available</li>
-    </ul>
+      <ul class="deploy-list">
+        <li>✔ Dashboard UI update</li>
+        <li>✔ Nova button activation pipeline</li>
+        <li>✔ Portal routing refresh</li>
+        <li>✔ Zero expected downtime</li>
+        <li>✔ Automatic rollback available</li>
+      </ul>
 
-    <div class="deploy-cta">
-      <button id="learnMoreBtn" class="btn info">Learn More</button>
-      <button id="confirmDeployBtn" class="btn confirm">🜁 Confirm Deployment</button>
+      <div class="deploy-cta">
+        <button id="learnMoreBtn" class="btn info">Learn More</button>
+        <button id="confirmDeployBtn" class="btn confirm">🜁 Confirm Deployment</button>
+      </div>
     </div>
-  </div>
+
+    <!-- Portals -->
+    <section class="section">
+      <div class="section-head">
+        <h3>Portals</h3>
+      </div>
+
+      <div class="portal-grid">
+        <!-- Cineverse Portal -->
+        <a class="portal-card gold" href="/cineverse-creator/index.html">
+          <div class="portal-icon">🎬</div>
+          <div class="portal-meta">
+            <h4>Cineverse Movie Portal</h4>
+          </div>
+          <div class="portal-cta">Open</div>
+        </a>
+
+        <!-- Game Portal -->
+        <a class="portal-card" href="/game-portal/index.html">
+          <div class="portal-icon">🎮</div>
+          <div class="portal-meta">
+            <h4>Game Portal</h4>
+          </div>
+          <div class="portal-cta">Open</div>
+        </a>
+      </div>
+    </section>
 
     <!-- Control Panel -->
     <section class="panel deploy-panel">
@@ -96,19 +123,19 @@
       </div>
     </section>
 
- <!-- Work Environment Screen -->
-   <section class="panel oasis-panel">
-     <div class="oasis-head">
-       <h3>Work Environment</h3>
-       <p class="muted">Step into your Oasis Command Room.</p>
-     </div>
+    <!-- Oasis -->
+    <section class="panel oasis-panel">
+      <div class="oasis-head">
+        <h3>Work Environment</h3>
+        <p class="muted">Step into your Oasis Command Room.</p>
+      </div>
 
-     <div class="oasis-card" id="oasisCard">
-       <div class="oasis-overlay">OPEN OASIS</div>
-     </div>
-   </section>
-   
-    <!-- LOG -->
+      <div class="oasis-card" id="oasisCard">
+        <div class="oasis-overlay">OPEN OASIS</div>
+      </div>
+    </section>
+
+    <!-- Nova Log -->
     <section class="section">
       <div class="section-head">
         <h3>Nova Log</h3>
