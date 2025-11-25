@@ -93,4 +93,39 @@ document.getElementById("confirmDeployBtn").addEventListener("click", () => {
   runNovaDeploy();
 });
 
+/* ============================================================
+   SUPERNOVA — AUTO BUILD AFTER CONFIRMATION
+   Mode B: Auto ONLY after you approve once.
+============================================================ */
+
+let novaApproved = false;      // you approve once → auto mode starts
+let novaDeploying = false;     // prevents double-deploys
+const AUTO_CONFIRM_DEPLOY = true; // Mode B active
+
+/* When you press "Confirm Deployment" */
+document.getElementById("confirmDeployBtn")?.addEventListener("click", () => {
+  novaApproved = true;
+  log("Nova auto-build enabled (after your approval).");
+});
+
+/* Nova Change Detector — checks every 30s */
+setInterval(() => {
+  if (!AUTO_CONFIRM_DEPLOY) return;       // safety: mode can be turned off
+  if (!novaApproved) return;              // waits for your approval
+  if (novaDeploying) return;              // prevents overlap
+
+  // Basic change check — fast + safe
+  const lastBuild = localStorage.getItem("nova_last_build");
+  const currentFlag = localStorage.getItem("nova_update_flag");
+
+  if (currentFlag && currentFlag !== lastBuild) {
+    novaDeploying = true;
+    log("Change detected — Nova auto-deploy starting.");
+    runNovaDeploy();
+    localStorage.setItem("nova_last_build", currentFlag);
+
+    setTimeout(() => { novaDeploying = false; }, 15000);
+  }
+
+}, 30000); // every 30 seconds
 
