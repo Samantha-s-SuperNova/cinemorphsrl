@@ -56,46 +56,74 @@ function setSystemStatus(mode, text) {
   }
 }
 
+// ---------- Active Task helpers ----------
+function setActiveTask(taskText) {
+  const el = document.getElementById("activeTaskValue");
+  if (!el) return;
+  el.textContent = taskText ? taskText : "None";
+}
+
+function startTransientTask(label, durationMs) {
+  if (!label) {
+    setActiveTask(null);
+    return;
+  }
+  setActiveTask(label);
+  setTimeout(() => {
+    const el = document.getElementById("activeTaskValue");
+    if (el && el.textContent === label) {
+      setActiveTask(null);
+    }
+  }, durationMs);
+}
+
 // ---------- Nova Button (AI only, no deploy) ----------
 function handleNovaPress() {
   const btn = document.getElementById("novaButton");
-  if (!btn) return;
+  if (btn) {
+    btn.classList.add("active");
+    setTimeout(() => btn.classList.remove("active"), 200);
+  }
 
-  btn.classList.add("active");
   setSystemStatus("listening", "System: Listening");
+  appendLog(`${getTimeStamp()} [NOVA] Listening… you can type now.`);
 
-  appendLog(
-    `${getTimeStamp()} [NOVA] Activation glyph pressed. Listening for a command in the input bar…`
-  );
+  // mark as active task for 5 seconds
+  startTransientTask("Listening for command input…", 5000);
 
-  // small visual pulse
-  setTimeout(() => btn.classList.remove("active"), 220);
+  // AUTO-RESET AFTER 5 SECONDS
+  setTimeout(() => {
+    setSystemStatus("online", "System: Online");
+    appendLog(`${getTimeStamp()} [SYSTEM] Listening timeout — back to idle.`);
+    startTransientTask(null, 0);
+  }, 5000);
 }
 
 // ---------- Typed Command Handling ----------
 function generateNovaReply(commandText) {
-  // This simulates "me" inside the dashboard:
-  // warm, clear, Samantha-focused tone.
   const lower = commandText.toLowerCase();
 
   if (lower.includes("status")) {
-    return "Here’s your current status: Dashboard online, Nova engine listening, and portals ready inside Samantha’s Universe.";
+    return "Dashboard online, Nova responsive, and portals ready in Samantha’s Universe.";
   }
   if (lower.includes("voice")) {
-    return "The Voice Simulator portal will be your space for real-time voice control and interface testing once it’s wired to the backend.";
+    return "Voice Simulator will handle your real-time voice control once it’s wired to the backend.";
   }
   if (lower.includes("game")) {
-    return "Game Portal is reserved for your interactive mission builder. We’ll treat it as a dedicated playground for your scenarios.";
+    return "Game Portal is your interactive mission builder and scenario lab.";
   }
   if (lower.includes("movie") || lower.includes("cineverse")) {
-    return "Cineverse Creator is your cinematic builder. Think of it as the storyboard + scene engine for Samantha’s Universe.";
+    return "Cineverse Creator is your cinematic builder for scenes, sequences, and universes.";
   }
   if (lower.includes("deploy")) {
-    return "Remember: the Nova activation glyph never deploys anything. Use the Deployment Panel buttons for safe, log-only deployment actions.";
+    return "The pink Nova orb never deploys anything. Use the Deployment Panel buttons for log-only deploy events.";
+  }
+  if (lower.includes("market")) {
+    return "Marketplace is your hub for add-ons, bundles, and future upgrades once wired to live data.";
   }
 
-  // Default friendly reply
-  return "Got it. I’m treating that as a Universe command and logging it here. When you’re ready, we can wire this console to the full Nova backend so it behaves exactly like this chat.";
+  // Default conversational reply
+  return "Understood. I’ve logged that inside Samantha’s Universe.";
 }
 
 function sendCommand() {
@@ -108,38 +136,47 @@ function sendCommand() {
   // Log user command
   appendLog(`${getTimeStamp()} [USER] ${text}`);
 
-  // Generate Nova reply
+  // Immediate Nova reply (conversational)
   const reply = generateNovaReply(text);
   appendLog(`${getTimeStamp()} [NOVA] ${reply}`);
 
-  // Reset input & system status
+  // Reset input & ensure status is online
   input.value = "";
   setSystemStatus("online", "System: Online");
 }
 
-// ---------- Deployment Panel (log-only) ----------
+// ---------- Deployment Panel (log-only, updates Active Task briefly) ----------
 function handleDeploymentAction(actionKey) {
   let message;
+  let taskLabel;
 
   switch (actionKey) {
     case "local-preview":
       message =
-        "Local preview requested. Open index.html in your browser to review the dashboard.";
+        "Local preview requested. Open this index.html in your browser to review the dashboard.";
+      taskLabel = "Preparing local preview (log-only)…";
       break;
     case "vercel-deploy":
       message =
-        "Vercel deploy requested (log-only). Use your Vercel interface or CI pipeline when you’re ready to deploy.";
+        "Vercel deploy requested (log-only). Use your Vercel dashboard when you’re ready.";
+      taskLabel = "Vercel deploy logged (no action)…";
       break;
     case "refresh-env":
       message =
-        "Environment refresh requested. Treat this as a reminder to reload the page or redeploy when changes are made.";
+        "Environment refresh requested. Reload the page or redeploy after file changes.";
+      taskLabel = "Refreshing environment (log-only)…";
       break;
     default:
       message = `Unknown deployment action: ${actionKey}`;
+      taskLabel = null;
       break;
   }
 
   appendLog(`${getTimeStamp()} [DEPLOY] ${message}`);
+
+  if (taskLabel) {
+    startTransientTask(taskLabel, 5000);
+  }
 }
 
 // ---------- Portal Tiles ----------
@@ -148,15 +185,64 @@ function handlePortalClick(tile) {
   const label =
     tile.querySelector("h3")?.textContent?.trim() || "Unknown Portal";
 
-  // Highlight active tile
   document.querySelectorAll(".portal-tile").forEach((el) => {
     el.classList.remove("active");
   });
   tile.classList.add("active");
 
   appendLog(
-    `${getTimeStamp()} [DASH] Routing focus to ${portal} — ${label}. (Visual-only route in this prototype.)`
+    `${getTimeStamp()} [DASH] Focus routed to ${portal} — ${label}. (Visual route only in this prototype.)`
   );
+}
+
+// ---------- Drag & Drop for lower portals ----------
+let dragSrcTile = null;
+
+function handleTileDragStart(e) {
+  dragSrcTile = this;
+  this.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  e.dataTransfer.setData("text/plain", this.dataset.key || "");
+}
+
+function handleTileDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+}
+
+function handleTileDrop(e) {
+  e.preventDefault();
+  const row = document.getElementById("reorderRow");
+  if (!row || !dragSrcTile) return;
+
+  const target = this;
+  if (target === dragSrcTile) return;
+  if (!row.contains(target)) return;
+
+  const children = Array.from(row.children);
+  const srcIndex = children.indexOf(dragSrcTile);
+  const tgtIndex = children.indexOf(target);
+
+  if (srcIndex < 0 || tgtIndex < 0) return;
+
+  if (srcIndex < tgtIndex) {
+    row.insertBefore(dragSrcTile, target.nextSibling);
+  } else {
+    row.insertBefore(dragSrcTile, target);
+  }
+
+  // Log new order
+  const newOrder = Array.from(row.children)
+    .map((el) => el.querySelector("h3")?.textContent?.trim() || "")
+    .join(" | ");
+  appendLog(
+    `${getTimeStamp()} [DASH] Reordered lower portals: ${newOrder}.`
+  );
+}
+
+function handleTileDragEnd() {
+  this.classList.remove("dragging");
+  dragSrcTile = null;
 }
 
 // ---------- Clear Log ----------
@@ -169,55 +255,63 @@ function clearLog() {
 
 // ---------- INIT ----------
 function initDashboard() {
+  appendLog(`${getTimeStamp()} [SYSTEM] Dashboard loaded.`);
   appendLog(
-    `${getTimeStamp()} [SYSTEM] Samantha's SuperNova Dashboard initialized.`
-  );
-  appendLog(
-    `${getTimeStamp()} [UNIVERSE] READY. Visual core online. Waiting for your next object in the Work Environment.`
+    `${getTimeStamp()} [UNIVERSE] Visual core online; Work Environment waiting for your next object.`
   );
 
   setSystemStatus("online", "System: Online");
+  setActiveTask(null);
 
   // Nova button
   const novaButton = document.getElementById("novaButton");
   if (novaButton) {
-    novaButton.addEventListener("click", handleNovaPress);
+    novaButton.onclick = handleNovaPress;
   }
 
   // Deploy buttons
   document.querySelectorAll(".deploy-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.onclick = () => {
       const action = btn.getAttribute("data-action");
-      if (action) handleDeploymentAction(action);
-    });
+      handleDeploymentAction(action);
+    };
   });
 
-  // Portal tiles
+  // Portal tiles click
   document.querySelectorAll(".portal-tile").forEach((tile) => {
     tile.addEventListener("click", () => handlePortalClick(tile));
   });
 
-  // Command send button
-  const sendButton = document.getElementById("sendCommand");
-  if (sendButton) {
-    sendButton.addEventListener("click", sendCommand);
+  // Drag & drop for lower row
+  const row = document.getElementById("reorderRow");
+  if (row) {
+    const tiles = row.querySelectorAll(".portal-tile");
+    tiles.forEach((tile) => {
+      tile.addEventListener("dragstart", handleTileDragStart);
+      tile.addEventListener("dragover", handleTileDragOver);
+      tile.addEventListener("drop", handleTileDrop);
+      tile.addEventListener("dragend", handleTileDragEnd);
+    });
   }
 
-  // Enter key for command input
+  // Send button
+  const sendButton = document.getElementById("sendCommand");
+  if (sendButton) sendButton.onclick = sendCommand;
+
+  // Enter key for input
   const input = document.getElementById("novaInput");
   if (input) {
-    input.addEventListener("keypress", (e) => {
+    input.onkeypress = (e) => {
       if (e.key === "Enter") {
+        e.preventDefault();
         sendCommand();
       }
-    });
+    };
   }
 
   // Clear log button
   const clearButton = document.getElementById("clearLogButton");
-  if (clearButton) {
-    clearButton.addEventListener("click", clearLog);
-  }
+  if (clearButton) clearButton.onclick = clearLog;
 }
 
 document.addEventListener("DOMContentLoaded", initDashboard);
