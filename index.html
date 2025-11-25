@@ -1,30 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dashboard – Version 6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CinemorphSRL — SuperNova Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-<div class="container">
-  <h1>Dashboard – Version 6</h1>
 
-  <div class="card-grid">
-    <div class="card">
-      <h2>Cineverse Movie Portal</h2>
-      <button onclick="location.href='cineverse-creator/index.html'">Open</button>
+<body class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <h1>CinemorphSRL</h1>
+        <p class="sub">SuperNova Control Deck — Jet Black + Gold Edition</p>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Game Portal</h2>
-      <button onclick="location.href='game-portal/index.html'">Open</button>
+    <div class="top-actions">
+      <button id="novaButton" class="nova-button" aria-label="Nova Button">
+        <span class="nova-orb"></span>
+        <span class="nova-label">NOVA</span>
+      </button>
     </div>
-  </div>
+  </header>
 
-  <br />
-  <button id="novaButton">Launch & Deploy</button>
-</div>
+  <main class="wrap">
+    <section class="hero card">
+      <div class="hero-left">
+        <h2 class="hero-title">Mission Status</h2>
+        <p class="hero-sub">Everything routed and deploy ready. You control the pace.</p>
 
-<script src="main.js"></script>
+        <div id="blinkBanner" class="blink-banner hidden" role="status">
+          <span class="blink-dot"></span>
+          <span id="blinkText"></span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Universe</div>
+            <div class="metric-value">CinemorphSRL</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Portals Online</div>
+            <div class="metric-value" id="portalCount">2</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Nova State</div>
+            <div class="metric-value" id="novaState">READY</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h3>Portals</h3>
+        <p>Jump between portals instantly.</p>
+      </div>
+
+      <div class="portal-grid">
+        <a class="portal-card gold" href="/cineverse-creator/index.html">
+          <div class="portal-icon">🎬</div>
+          <div class="portal-meta">
+            <h4>Cineverse Movie Portal</h4>
+            <p>Create, preview, and publish drops.</p>
+          </div>
+          <div class="portal-cta">Open</div>
+        </a>
+
+        <a class="portal-card" href="/game-portal/index.html">
+          <div class="portal-icon">🎮</div>
+          <div class="portal-meta">
+            <h4>Game Portal</h4>
+            <p>Builder, launches, and play tests.</p>
+          </div>
+          <div class="portal-cta">Open</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h3>Nova Deploy Pipeline</h3>
+        <p>One clean path. When an obstacle completes, you’ll get a blinking banner, then choose “Deploy Now.”</p>
+      </div>
+
+      <div id="pipeline" class="pipeline"></div>
+
+      <div class="pipeline-actions">
+        <button id="deployNow" class="btn btn-gold">Deploy Now</button>
+        <button id="autopilotToggle" class="btn btn-ghost" aria-pressed="false">Autopilot: OFF</button>
+      </div>
+
+      <p class="tiny-note">
+        Note: This dashboard can’t redeploy Vercel directly (static site). “Deploy Now” marks the next obstacle deploy ready and
+        shows you what to commit. Any GitHub commit triggers Vercel auto-deploy.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h3>Nova Log</h3>
+        <p>What’s done, what’s working, what’s next.</p>
+      </div>
+
+      <div id="log" class="log"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© Samantha’s One-Click System™ — All rights reserved.</small>
+  </footer>
+
+  <script src="main.js"></script>
 </body>
 </html>
