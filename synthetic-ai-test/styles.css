@@ -1,89 +1,160 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, sans-serif;
-  background: #0a1020;
-  color: white;
-}
-
-.topbar {
-  padding: 1rem;
-  background: rgba(255,255,255,0.05);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.topbar .brand h1 {
-  margin: 0;
-  font-size: 1.4rem;
-}
-
-.sub {
-  margin: 0;
-  opacity: 0.7;
-}
-
-.layout {
-  display: flex;
-  gap: 2rem;
-  padding: 1.5rem;
-}
-
-/* Columns */
-#portalsColumn, #workEnvColumn {
-  width: 50%;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-}
-
-.portal-card, .work-card {
-  display: block;
-  background: rgba(255,255,255,0.04);
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 6px;
-  text-decoration: none;
-  color: white;
-  cursor: pointer;
-}
-
-/* Synthetic AI Panel */
-.synthetic-ai-panel {
-  margin: 1rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255,255,255,0.04);
-  border-left: 3px solid #9e6bff;
-  border-radius: 6px;
-}
-
-.synthetic-ai-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.synthetic-ai-actions button {
-  padding: 0.35rem 0.75rem;
-  background: rgba(255,255,255,0.1);
+/* ===== Command Bridge Button ===== */
+.command-bridge-btn {
+  margin-top: 0.75rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 5px;
-  color: white;
+  background: rgba(158, 107, 255, 0.18);
+  color: #ffffff;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
-.synthetic-ai-actions button:hover {
-  background: rgba(255,255,255,0.2);
+.command-bridge-btn:hover {
+  background: rgba(158, 107, 255, 0.32);
 }
 
-.synthetic-ai-log {
-  max-height: 120px;
+/* ===== Command Bridge Panel ===== */
+.cb-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  max-width: 80vw;
+  height: 100vh;
+  background: rgba(4, 6, 14, 0.98);
+  box-shadow: -0.25rem 0 1rem rgba(0, 0, 0, 0.6);
+  border-left: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+  z-index: 999;
+}
+
+.cb-panel-visible {
+  transform: translateX(0%);
+}
+
+.cb-panel-hidden {
+  transform: translateX(100%);
+}
+
+.cb-chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  font-size: 0.95rem;
+}
+
+.cb-close-btn {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+/* Messages area */
+.cb-messages {
+  flex: 1;
+  padding: 0.75rem 0.75rem 0.5rem;
   overflow-y: auto;
   font-size: 0.85rem;
-  opacity: 0.85;
-  padding-top: 0.25rem;
 }
 
+/* Generic message bubble */
+.cb-msg {
+  max-width: 80%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.65rem;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+
+/* Nova on the left */
+.cb-msg-nova {
+  align-self: flex-start;
+  background: rgba(158, 107, 255, 0.3);
+}
+
+/* SAI on the right */
+.cb-msg-sai {
+  align-self: flex-end;
+  background: rgba(255,255,255,0.08);
+}
+
+/* Typing style */
+.cb-msg-typing {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+/* Controls row */
+.cb-controls {
+  padding: 0.5rem 0.75rem 0;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.cb-apply-btn {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0, 180, 140, 0.25);
+  color: #ffffff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.cb-apply-btn:hover {
+  background: rgba(0, 180, 140, 0.4);
+}
+
+/* Input row */
+.cb-input-row {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.cb-input-row input {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.45);
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
+.cb-input-row input:focus {
+  outline: none;
+  border-color: rgba(158, 107, 255, 0.7);
+}
+
+.cb-send-btn {
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(158, 107, 255, 0.45);
+  color: #ffffff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.cb-send-btn:hover {
+  background: rgba(158, 107, 255, 0.7);
+}
+
+/* Stack chat panel neatly on small screens */
+@media (max-width: 600px) {
+  .cb-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+}
