@@ -64,6 +64,10 @@ function log(msg) {
   novaLog.prepend(row);
 }
 
+/* ------------------------------------------------------------
+   NEW — Deployment Panel Logic
+------------------------------------------------------------ */
+
 /* Toggle deployment info panel */
 const missionBanner = document.getElementById("missionBanner");
 const deployInfoPanel = document.getElementById("deployInfoPanel");
