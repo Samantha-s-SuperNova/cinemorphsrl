@@ -2,17 +2,18 @@
    BASE PAGE STYLING
 ==================================*/
 :root {
-  --bg: #0a0f1a;
-  --panel: #111725;
+  --bg: #070b16;
+  --panel: #101626;
   --text: #ffffff;
   --accent: #7aa0ff;
   --accent2: #ff6b9c;
+  --accent3: #39e6b6;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+  background: radial-gradient(circle at top, #151b2f 0, #050712 60%);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -30,19 +31,19 @@ body {
   justify-content: space-between;
 }
 
-.topbar h1 {
+.brand h1 {
   margin: 0;
   font-size: 1.3rem;
 }
 
-.topbar .sub {
+.brand .sub {
   font-size: 0.85rem;
   opacity: 0.7;
 }
 
 .nova-button {
   padding: 0.6rem 1.2rem;
-  border-radius: 6px;
+  border-radius: 999px;
   background: linear-gradient(135deg, var(--accent2), var(--accent));
   border: none;
   color: white;
@@ -62,35 +63,48 @@ body {
 }
 
 .column {
-  background: var(--panel);
+  background: rgba(5, 8, 20, 0.95);
   flex: 1;
   padding: 1rem;
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
 }
 
 .column h2 {
   margin-top: 0;
 }
 
+/* Portals */
 .portal-btn {
   width: 100%;
   padding: 0.8rem;
   margin-bottom: 0.6rem;
   border-radius: 6px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.1);
   color: white;
   cursor: pointer;
   font-size: 0.95rem;
 }
 
+/* Status & Task Log */
 .status-box {
   background: rgba(255,255,255,0.04);
   padding: 0.9rem;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.06);
   margin-bottom: 0.9rem;
+}
+
+.task-log {
+  background: rgba(0,0,0,0.4);
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  max-height: 260px;
+  overflow-y: auto;
+  font-size: 0.8rem;
 }
 
 /* ================================
@@ -100,7 +114,7 @@ body {
   position: fixed;
   top: 0;
   right: 0;
-  width: 360px;
+  width: 380px;
   height: 100vh;
   background: radial-gradient(circle at top, #151b2f 0, #050712 60%);
   display: flex;
@@ -151,6 +165,7 @@ body {
   padding: 0.6rem 0.9rem;
   border-radius: 10px;
   line-height: 1.35;
+  font-size: 0.9rem;
 }
 
 .nova-msg-user {
@@ -164,12 +179,43 @@ body {
   border: 1px solid rgba(255,255,255,0.06);
 }
 
+/* NoSa style */
+.nova-msg-nosa {
+  margin-right: auto;
+  background: rgba(57, 230, 182, 0.15);
+  border: 1px solid rgba(57, 230, 182, 0.6);
+}
+
+/* COMMAND BAR */
+.nova-chat-commands {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.8rem;
+}
+
+.nova-chat-commands span {
+  opacity: 0.7;
+}
+
+.cmd-btn {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.35);
+  color: white;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
 /* INPUT AREA */
 .nova-chat-input {
   display: flex;
   gap: 0.5rem;
   padding: 0.8rem;
-  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 .nova-chat-input input {
@@ -185,8 +231,19 @@ body {
   padding: 0.6rem 1rem;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  background: linear-gradient(135deg, var(--accent2), var(--accent3));
   color: white;
   font-weight: bold;
   cursor: pointer;
+}
+
+/* Basic responsiveness */
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .nova-chat {
+    width: 100%;
+  }
 }
