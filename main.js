@@ -1,24 +1,22 @@
-console.log("Dashboard v8 loaded");
+console.log("SuperNova Dashboard Loaded");
 
-// Append log messages
 function log(msg) {
   const el = document.getElementById("logBody");
   const line = document.createElement("div");
-  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  line.innerHTML = `<span style="opacity:.6">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
   el.appendChild(line);
   el.scrollTop = el.scrollHeight;
 }
 
-// Nova deploy button handler
 document.getElementById("novaButton").addEventListener("click", async () => {
-  log("NOVA: Triggering deployment...");
+  log("🟦 Nova: Triggering deployment...");
 
   try {
     const res = await fetch("/api/nova");
     const data = await res.json();
-    log(`NOVA: ${data.message}`);
+
+    log(`🟦 Nova: ${data.message}`);
   } catch (err) {
-    log("NOVA ERROR: Unable to trigger deployment.");
+    log("🔴 Nova: Deployment failed.");
   }
 });
-
