@@ -211,6 +211,110 @@
       }
     });
 
+  <!-- ========================================================= -->
+  <!--              NOVA / NoSa — COMMANDER PANEL               -->
+  <!-- ========================================================= -->
+
+  <div id="novaChatPanel" class="nova-chat">
+
+    <!-- === Dynamic Alert Banner === -->
+    <div id="alertBanner" class="alert-banner green">
+      System Status: READY — All Systems Green
+    </div>
+
+    <!-- === Header === -->
+    <header class="nova-chat-header">
+      <span id="chatHeaderTitle">Nova · NoSa — Live Console</span>
+      <button id="closeNovaChat" class="nova-chat-close">×</button>
+    </header>
+
+    <!-- === Message Area === -->
+    <div id="novaChatMessages" class="nova-chat-messages">
+      <div class="nova-msg nova-msg-nova" id="initialGreeting"></div>
+    </div>
+
+    <!-- === Controls: Voice Mode + Input Row === -->
+    <div class="voice-mode-container">
+      <label for="voiceModeToggle">Voice Mode:</label>
+      <input type="checkbox" id="voiceModeToggle" />
+    </div>
+
+    <form id="novaChatForm" class="nova-chat-input">
+      <input
+        id="novaChatText"
+        type="text"
+        placeholder="Type your message…"
+        autocomplete="off"
+      />
+
+      <!-- TALK TO NOVA BUTTON -->
+      <button type="button" id="talkToNovaBtn" class="talk-to-nova-btn">
+        🎤 Talk to Nova
+      </button>
+
+      <button type="submit" class="send-btn">Send</button>
+    </form>
+  </div>
+
+    // ============================================================
+    // END-OF-DAY / NIGHT SHUTDOWN PROTOCOL (Commander Triggered)
+    // ============================================================
+
+    function checkEndOfDayPhrases(text) {
+      const lowered = text.toLowerCase();
+
+      return (
+        lowered.includes("nova goodnight") ||
+        lowered.includes("nova night") ||
+        lowered.includes("nova, i'm tired") ||
+        lowered.includes("nova im tired") ||
+        lowered.includes("nova i am tired") ||
+        lowered.includes("nova i am ready for bed") ||
+        lowered.includes("nova, i am ready for bed") ||
+        lowered.includes("nosa close out the day") ||
+        lowered.includes("nosa close the day") ||
+        lowered.includes("end of day") ||
+        lowered.includes("end of shift")
+      );
+    }
+
+    async function runEndOfDayProtocol() {
+      // Nova Formal Alert Greeting
+      appendMessage(
+        "Commander, Nova reporting. End-of-day protocol initiated. Preparing your final summary.",
+        "nova"
+      );
+
+      // Generate Summary
+      const summary = `
+        • Today’s tasks completed are logged.
+        • Pending objects have been saved.
+        • System has entered Night Mode.
+        • NoSa will maintain quiet standby.
+        • You may resume at any time, Commander.
+      `;
+
+      appendMessage(summary, "nova");
+
+      // NoSa confirmation
+      appendMessage(
+        "NoSa: Daily log saved. All systems in night mode, Commander.",
+        "nosa"
+      );
+
+      // Log for system history
+      logTask("End-of-day protocol completed and logged.");
+    }
+
+    // Listen for end-of-day phrases
+    input.addEventListener("input", () => {
+      const text = input.value.trim();
+      if (text && checkEndOfDayPhrases(text)) {
+        runEndOfDayProtocol();
+      }
+    });
+  
+   
     // ---------- Quick command buttons (Approve / Implement / Apply / Decline) ----------
     cmdButtons.forEach(btn => {
       btn.addEventListener("click", async () => {
