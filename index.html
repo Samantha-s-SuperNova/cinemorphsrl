@@ -13,7 +13,7 @@
   <header class="topbar">
     <div class="brand">
       <h1>Samantha’s Universe — SuperNova Dashboard</h1>
-      <p class="sub">Unified Control Deck</p>
+      <p class="sub">Unified Control Deck — Nova · NoSa · SAI</p>
     </div>
 
     <div class="top-actions">
@@ -24,37 +24,42 @@
   <!-- ========== MAIN LAYOUT ========== -->
   <main class="layout">
 
-    <!-- LEFT COLUMN -->
+    <!-- LEFT COLUMN: PORTALS -->
     <section class="column portals">
       <h2>Portals</h2>
 
-      <button class="portal-btn">CineVerse Creator</button>
-      <button class="portal-btn">Game Builder</button>
-      <button class="portal-btn">Voice / SAI</button>
-      <button class="portal-btn">Marketplace</button>
+      <button class="portal-btn" data-portal="cineverse">CineVerse Creator</button>
+      <button class="portal-btn" data-portal="game">Game Builder</button>
+      <button class="portal-btn" data-portal="voice">Voice / SAI</button>
+      <button class="portal-btn" data-portal="marketplace">Marketplace</button>
     </section>
 
-    <!-- RIGHT COLUMN -->
+    <!-- RIGHT COLUMN: STATUS + TASK LOG -->
     <section class="column status">
       <h2>System Status</h2>
 
       <div class="status-box">
-        <p>Universe Online</p>
-        <p>Visual Core Ready</p>
-        <p>Nova Engine Idle</p>
+        <p><strong>Universe:</strong> Online</p>
+        <p><strong>Visual Core:</strong> Ready</p>
+        <p><strong>SuperNova / NoSa:</strong> Connected</p>
       </div>
 
       <div class="status-box">
-        <p>Modules Linked</p>
-        <p>Current Task: SAI Activation</p>
-        <p>Next Task: Dashboard Expansion</p>
+        <p><strong>Current Object:</strong> <span id="currentObject">Final Rebuild</span></p>
+        <p><strong>Mode:</strong> <span id="currentMode">Build Mode</span></p>
+        <p><strong>Commander:</strong> Samantha (approval required)</p>
+      </div>
+
+      <h2>Task Log (Local Session)</h2>
+      <div id="taskLog" class="task-log">
+        <p>No objects logged yet. SuperNova will record as you work.</p>
       </div>
     </section>
 
   </main>
 
   <!-- ========================================================= -->
-  <!-- ⭐ NOVA / NoSa CHAT PANEL — FULL SAI FRONT-END INCLUDED ⭐ -->
+  <!-- ⭐ NOVA / NoSa CHAT PANEL — SAI + APPROVAL CONTROLS ⭐ -->
   <!-- ========================================================= -->
 
   <div id="novaChatPanel" class="nova-chat">
@@ -65,10 +70,20 @@
 
     <div id="novaChatMessages" class="nova-chat-messages">
       <div class="nova-msg nova-msg-nova">
-        <p>SuperNova online inside Samantha’s Universe. How can I help?</p>
+        <p>SuperNova online inside Samantha’s Universe. You’re in command — I’ll suggest objects, you approve.</p>
       </div>
     </div>
 
+    <!-- Quick command / approval bar -->
+    <div class="nova-chat-commands">
+      <span>Quick commands:</span>
+      <button class="cmd-btn" data-cmd="approve">Approve</button>
+      <button class="cmd-btn" data-cmd="implement">Implement</button>
+      <button class="cmd-btn" data-cmd="apply">Apply change</button>
+      <button class="cmd-btn" data-cmd="decline">Decline</button>
+    </div>
+
+    <!-- Input -->
     <form id="novaChatForm" class="nova-chat-input">
       <input
         id="novaChatText"
@@ -89,7 +104,64 @@
     const form = document.getElementById("novaChatForm");
     const input = document.getElementById("novaChatText");
     const messages = document.getElementById("novaChatMessages");
+    const cmdButtons = document.querySelectorAll(".cmd-btn");
+    const taskLogEl = document.getElementById("taskLog");
+    const currentObjectEl = document.getElementById("currentObject");
+    const currentModeEl = document.getElementById("currentMode");
 
+    let lastContext = "Final rebuild of Samantha's Universe dashboard.";
+    let taskLog = [];
+
+    // ---------- Helpers ----------
+    function appendMessage(text, who = "nova") {
+      const div = document.createElement("div");
+      if (who === "user") {
+        div.className = "nova-msg nova-msg-user";
+      } else if (who === "nosa") {
+        div.className = "nova-msg nova-msg-nosa";
+      } else {
+        div.className = "nova-msg nova-msg-nova";
+      }
+      div.innerHTML = "<p>" + text + "</p>";
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+      lastContext = text;
+    }
+
+    function logTask(entry) {
+      const timestamp = new Date().toLocaleTimeString();
+      const line = "[" + timestamp + "] " + entry;
+      taskLog.push(line);
+      if (taskLog.length > 50) taskLog.shift();
+
+      taskLogEl.innerHTML = "";
+      taskLog.forEach(item => {
+        const p = document.createElement("p");
+        p.textContent = item;
+        taskLogEl.appendChild(p);
+      });
+
+      // Optional: also keep in localStorage (session-style)
+      try {
+        localStorage.setItem("supernovaTaskLog", JSON.stringify(taskLog));
+      } catch (e) {}
+    }
+
+    // Load any previous session log
+    try {
+      const stored = localStorage.getItem("supernovaTaskLog");
+      if (stored) {
+        taskLog = JSON.parse(stored);
+        taskLogEl.innerHTML = "";
+        taskLog.forEach(item => {
+          const p = document.createElement("p");
+          p.textContent = item;
+          taskLogEl.appendChild(p);
+        });
+      }
+    } catch (e) {}
+
+    // ---------- Panel open/close ----------
     function openPanel() {
       panel.classList.add("open");
       input && input.focus();
@@ -102,21 +174,17 @@
     novaBtn.addEventListener("click", openPanel);
     closeBtn.addEventListener("click", closePanel);
 
+    // ---------- Main chat submit ----------
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const text = input.value.trim();
       if (!text) return;
 
-      // user message bubble
-      const userMsg = document.createElement("div");
-      userMsg.className = "nova-msg nova-msg-user";
-      userMsg.innerHTML = `<p>${text}</p>`;
-      messages.appendChild(userMsg);
+      appendMessage(text, "user");
+      logTask("Commander: " + text);
       input.value = "";
-      messages.scrollTop = messages.scrollHeight;
 
-      // loading bubble
       const loadingMsg = document.createElement("div");
       loadingMsg.className = "nova-msg nova-msg-nova";
       loadingMsg.innerHTML = "<p>Connecting to SuperNova…</p>";
@@ -133,22 +201,55 @@
         const data = await res.json();
         loadingMsg.remove();
 
-        const novaMsg = document.createElement("div");
-        novaMsg.className = "nova-msg nova-msg-nova";
-        novaMsg.innerHTML = `<p>${data.reply || "No reply received."}</p>`;
-        messages.appendChild(novaMsg);
-        messages.scrollTop = messages.scrollHeight;
+        appendMessage(data.reply || "No reply received.", "nova");
+        logTask("SuperNova: responded to commander.");
       } catch (err) {
         console.error(err);
         loadingMsg.remove();
-        const errorMsg = document.createElement("div");
-        errorMsg.className = "nova-msg nova-msg-nova";
-        errorMsg.innerHTML = "<p>Problem talking to SAI backend.</p>";
-        messages.appendChild(errorMsg);
-        messages.scrollTop = messages.scrollHeight;
+        appendMessage("Problem talking to SAI backend.", "nova");
+        logTask("Error: SAI backend issue.");
       }
     });
+
+    // ---------- Quick command buttons (Approve / Implement / Apply / Decline) ----------
+    cmdButtons.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const cmd = btn.getAttribute("data-cmd");
+        const label =
+          cmd === "approve" ? "Approve" :
+          cmd === "implement" ? "Implement" :
+          cmd === "apply" ? "Apply change" :
+          cmd === "decline" ? "Decline" : cmd;
+
+        appendMessage("Command: " + label, "user");
+        logTask("Commander issued command: " + label);
+
+        try {
+          const res = await fetch("/api/actions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ command: cmd, context: lastContext }),
+          });
+          const data = await res.json();
+
+          appendMessage(data.summary || "Action received.", "nosa");
+          logTask("NoSa handled action: " + label);
+
+          if (data.currentObject) {
+            currentObjectEl.textContent = data.currentObject;
+          }
+          if (data.mode) {
+            currentModeEl.textContent = data.mode;
+          }
+        } catch (err) {
+          console.error(err);
+          appendMessage("NoSa encountered a problem handling that command.", "nosa");
+          logTask("Error: NoSa action issue.");
+        }
+      });
+    });
   });
-</script>
+  </script>
+
 </body>
 </html>
