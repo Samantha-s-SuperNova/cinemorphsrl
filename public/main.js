@@ -10,18 +10,23 @@ function now() {
 }
 
 const logBody = document.getElementById("logBody");
+
 function log(level, tag, msg) {
   if (!logBody) return;
   const div = document.createElement("div");
   div.className = "log-line";
-  div.innerHTML = `<span class="log-time">${now()}</span><span>[${tag}]</span><span>${level}</span><span>${msg}</span>`;
+  div.innerHTML = `
+    <span class="log-time">${now()}</span>
+    <span>[${tag}]</span>
+    <span>${level}</span>
+    <span>${msg}</span>`;
   logBody.appendChild(div);
   logBody.scrollTop = logBody.scrollHeight;
 }
 
 log("READY", "DASH", "Dashboard online.");
 
-// ---------- Routing to Portals ----------
+// ---------- Routing ----------
 document.querySelectorAll("[data-open]").forEach((btn) => {
   btn.onclick = () => {
     const dest = btn.getAttribute("data-open");
@@ -30,15 +35,13 @@ document.querySelectorAll("[data-open]").forEach((btn) => {
   };
 });
 
-// ---------- Nova Launch & Deploy (visual only) ----------
-
+// ---------- Launch & Deploy (local sim) ----------
 const novaDeploy = document.getElementById("novaDeployButton");
 const statusEl = document.getElementById("portalStatus");
 
 novaDeploy.onclick = () => {
-  if (!statusEl) return;
   statusEl.textContent = "In progress";
-  log("RUN", "NOVA", "Launch & Deploy pressed (clean mode).");
+  log("RUN", "NOVA", "Launch & Deploy pressed…");
 
   const steps = [
     "Validating Universe routes…",
@@ -54,15 +57,14 @@ novaDeploy.onclick = () => {
     if (i >= steps.length) {
       clearInterval(t);
       statusEl.textContent = "Deploy ready";
-      log("DONE", "NOVA", "Scan complete. (No remote deploy triggered yet.)");
+      log("DONE", "NOVA", "Scan complete.");
     }
   }, 600);
 };
 
 // ===============================
-// Nova Chat Panel (Dashboard)
+// REAL NOVA CHAT (wired to API)
 // ===============================
-
 const chatPanel = document.getElementById("novaChatPanel");
 const chatToggle = document.getElementById("novaChatToggle");
 const chatClose = document.getElementById("chatCloseBtn");
@@ -71,7 +73,6 @@ const chatForm = document.getElementById("chatForm");
 const chatInput = document.getElementById("chatInput");
 
 function addChatMessage(who, text) {
-  if (!chatMessages) return;
   const div = document.createElement("div");
   div.className = "chat-msg" + (who === "You" ? " me" : "");
   div.innerHTML = `<span class="who">${who}:</span><span>${text}</span>`;
@@ -79,36 +80,42 @@ function addChatMessage(who, text) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function openChat() {
-  if (!chatPanel) return;
+chatToggle?.addEventListener("click", () => {
   chatPanel.classList.add("open");
-  if (chatMessages && !chatMessages.hasChildNodes()) {
-    addChatMessage(
-      "Nova",
-      "I’m in local dashboard mode. Ask anything about your portals, and I’ll guide you."
-    );
+  if (!chatMessages.hasChildNodes()) {
+    addChatMessage("Nova", "Dashboard Nova Chat online.");
   }
-}
+});
 
-function closeChat() {
-  if (!chatPanel) return;
+chatClose?.addEventListener("click", () => {
   chatPanel.classList.remove("open");
-}
+});
 
-chatToggle?.addEventListener("click", openChat);
-chatClose?.addEventListener("click", closeChat);
-
-chatForm?.addEventListener("submit", (e) => {
+chatForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const text = (chatInput?.value || "").trim();
-  if (!text) return;
-  addChatMessage("You", text);
-  if (chatInput) chatInput.value = "";
 
-  // Simple canned response for now
-  addChatMessage(
-    "Nova",
-    "Got it. In this offline preview I can’t call the real AI API, " +
-      "but this is exactly where your live Nova assistant will answer on the deployed site."
-  );
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  addChatMessage("You", text);
+  chatInput.value = "";
+
+  addChatMessage("Nova", "Typing…");
+
+  try {
+    const res = await fetch("/api/nova-chat.js", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+    chatMessages.lastChild.remove(); // remove "Typing…"
+
+    addChatMessage("Nova", data.reply || "No response.");
+  } catch (err) {
+    console.error(err);
+    chatMessages.lastChild.remove();
+    addChatMessage("Nova", "Error contacting AI backend.");
+  }
 });
