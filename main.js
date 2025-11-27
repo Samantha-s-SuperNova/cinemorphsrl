@@ -7,7 +7,7 @@ function nowStamp() {
   const d = new Date();
   return d.toTimeString().slice(0, 8);
 }
-
+ 
 function appendLog(level, tag, message, cssClass) {
   if (!logBody) return;
   const line = document.createElement("div");
